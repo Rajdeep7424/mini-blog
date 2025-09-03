@@ -1,0 +1,17 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;       
+  max-width: 600px;   
+  margin: auto;
+}
+
+.form input{
+    padding: 1rem;
+    font-size: 18px;
+}
+.form span{
+    display: flex;
+    justify-content: space-evenly;
+}

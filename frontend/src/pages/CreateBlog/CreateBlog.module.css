@@ -1,0 +1,84 @@
+.container {
+  width: 50%;
+  margin: auto;
+  padding: 1rem;
+}
+
+.container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.container h2 {
+  font-size: 2.5rem;
+  text-align: center;
+}
+
+.container input,
+.container textarea {
+  padding: 1rem;
+  font-size: 1.5em;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.container button {
+  width: 40%;
+  margin: auto;
+  padding: 1rem;
+  font-size: 20px;
+  border: none;
+  border-radius: 6px;
+  background: rgb(210, 84, 5);
+  color: white;
+  cursor: pointer;
+}
+
+.container button:hover {
+  background: rgb(180, 70, 5);
+  transition: 0.3s ease;
+}
+
+/* 📱 Responsive styles */
+@media (max-width: 1024px) {
+  .container {
+    width: 70%;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 90%;
+  }
+  .container h2 {
+    font-size: 2rem;
+  }
+  .container input,
+  .container textarea {
+    font-size: 1.2em;
+  }
+  .container button {
+    width: 100%;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: 95%;
+    padding: 0.5rem;
+  }
+  .container h2 {
+    font-size: 1.5rem;
+  }
+  .container input,
+  .container textarea {
+    font-size: 1em;
+    padding: 0.7rem;
+  }
+  .container button {
+    font-size: 16px;
+    padding: 0.8rem;
+  }
+}

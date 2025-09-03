@@ -1,0 +1,49 @@
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import connectDB from "./config/db.js";
+import authRoutes from "./routes/auth.js";
+import blogRoutes from "./routes/blogRoutes.js";
+
+// Load environment variables
+dotenv.config();
+
+// Create Express application
+const app = express();
+// Middleware - Fix CORS configuration
+// Simple CORS for development
+app.use(cors({
+  origin: true, // Allow all origins
+  credentials: true
+}));
+// Middleware
+app.use(express.json());
+
+// Health check route
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to the Blog API" });
+});
+
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/blogs", blogRoutes);
+
+// Define PORT
+const PORT = process.env.PORT || 5000;
+
+// Connect DB and then start server
+const startServer = async () => {
+  try {
+    await connectDB(); // wait for DB connection
+    console.log("✅ MongoDB Connected");
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error("❌ Failed to connect to MongoDB:", err.message);
+    process.exit(1); // Exit process if DB connection fails
+  }
+};
+
+startServer();

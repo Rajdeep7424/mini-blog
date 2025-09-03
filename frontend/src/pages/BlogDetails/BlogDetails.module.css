@@ -1,0 +1,57 @@
+.blogcontainer {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.backbtn {
+  background: rgb(210, 84, 5);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.backbtn:hover {
+  background: rgb(180, 70, 5);
+}
+
+.blogcard {
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.blogcard h2 {
+  font-size: 2rem;
+  margin-bottom: 0.8rem;
+}
+
+.blogmeta {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.blogcontent {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #333;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .blogcard {
+    padding: 1rem;
+  }
+  .blogcard h2 {
+    font-size: 1.5rem;
+  }
+  .blogcontent {
+    font-size: 1rem;
+  }
+}
