@@ -1,57 +1,95 @@
 .blogcontainer {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 1rem;
+  max-width: 850px;
+  margin: 2.5rem auto;
+  padding: 1.5rem;
 }
 
+/* Back Button */
 .backbtn {
-  background: rgb(210, 84, 5);
-  color: white;
+  background: linear-gradient(135deg, rgb(210, 84, 5), rgb(230, 100, 25));
+  color: #fff;
   border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
+  padding: 0.7rem 1.4rem;
+  border-radius: 10px;
   cursor: pointer;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
   transition: all 0.3s ease;
 }
 
 .backbtn:hover {
-  background: rgb(180, 70, 5);
+  background: linear-gradient(135deg, rgb(180, 70, 5), rgb(210, 90, 15));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
 }
 
+/* Blog Card */
 .blogcard {
   background: #fff;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 16px;
+  padding: 2.2rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.blogcard h2 {
-  font-size: 2rem;
+.blogcard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+}
+
+/* Title */
+.blogcard h2, 
+.blogtitle {
+  font-size: 2.2rem;
   margin-bottom: 0.8rem;
+  color: #222;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
+/* Meta Info */
 .blogmeta {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  color: #777;
+  margin-bottom: 1.6rem;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
+.blogmeta span {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Content */
 .blogcontent {
-  font-size: 1.1rem;
-  line-height: 1.7;
+  font-size: 1.15rem;
+  line-height: 1.8;
   color: #333;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .blogcard {
-    padding: 1rem;
+    padding: 1.4rem;
+    border-radius: 12px;
   }
+
   .blogcard h2 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
+
   .blogcontent {
-    font-size: 1rem;
+    font-size: 1.05rem;
+  }
+
+  .backbtn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
   }
 }

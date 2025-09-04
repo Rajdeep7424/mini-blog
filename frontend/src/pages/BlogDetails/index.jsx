@@ -23,7 +23,6 @@ export default function BlogDetails() {
       setLoading(false);
     }
   };
-
   if (loading) return <p>Loading...</p>;
   if (!blog) return <p>Blog not found.</p>;
 
@@ -33,7 +32,7 @@ export default function BlogDetails() {
       <div className={styles.blogcard}>
         <h2>{blog.title}</h2>
         <p className={styles.blogmeta}>
-          ✍️ Author: {blog.author?.name || "Unknown"} | 📅 {new Date(blog.createdAt).toLocaleDateString()}
+          ✍️ Author: {blog.author?.username || "Unknown"} | 📅 {new Date(blog.createdAt).toLocaleDateString()}
         </p>
         <p className={styles.blogcontent}>{blog.content}</p>
       </div>

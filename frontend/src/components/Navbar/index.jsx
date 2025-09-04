@@ -9,7 +9,7 @@ export default function Navbar() {
 
   return (
     <nav className={styles.nav}>
-      <h1>BlogPosts</h1>
+      <h1><NavLink to="/" onClick={() => setIsOpen(false)}>BlogPost</NavLink></h1>
 
       {/* Hamburger Button (only visible on small screens) */}
       <div
@@ -51,7 +51,7 @@ export default function Navbar() {
               </NavLink>
             </li>
             <li>
-              <button onClick={logout}>Logout</button>
+              <button onClick={logout}><NavLink to="/" onClick={() => setIsOpen(false)}>Logout</NavLink></button>
             </li>
           </>
         )}

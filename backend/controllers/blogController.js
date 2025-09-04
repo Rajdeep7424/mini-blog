@@ -1,14 +1,14 @@
 import Blog from '../models/Blog.js';
-import User from '../models/User.js';
 
 // @desc    Get all blogs for logged-in user
 // @route   GET /api/blogs
 // @access  Private
 const getBlogs = async (req, res) => {
   try {
-    // Find blogs where the author matches the logged-in user's ID
-    const blogs = await Blog.find({ author: req.user.id }).sort({ createdAt: -1 });
-    
+    const blogs = await Blog.find({ author: req.user.id })
+      .populate("author", "username email") // ✅ populate author
+      .sort({ createdAt: -1 });
+
     res.status(200).json({
       success: true,
       count: blogs.length,
@@ -31,7 +31,7 @@ const getBlog = async (req, res) => {
     const blog = await Blog.findOne({ 
       _id: req.params.id, 
       author: req.user.id 
-    });
+    }).populate("author", "username email"); // ✅ populate author
 
     if (!blog) {
       return res.status(404).json({ 
@@ -60,7 +60,6 @@ const createBlog = async (req, res) => {
   try {
     const { title, content, tags } = req.body;
 
-    // Validation
     if (!title || !content) {
       return res.status(400).json({ 
         success: false,
@@ -68,7 +67,6 @@ const createBlog = async (req, res) => {
       });
     }
 
-    // Create blog with author set to logged-in user
     const blog = await Blog.create({
       title,
       content,
@@ -76,8 +74,7 @@ const createBlog = async (req, res) => {
       author: req.user.id
     });
 
-    // Populate author info to return with response
-    await blog.populate('author', 'username email');
+    await blog.populate("author", "username email"); // ✅ populate author
 
     res.status(201).json({
       success: true,
@@ -100,7 +97,6 @@ const updateBlog = async (req, res) => {
   try {
     const { title, content, tags } = req.body;
 
-    // Find blog and ensure it belongs to the user
     let blog = await Blog.findOne({ 
       _id: req.params.id, 
       author: req.user.id 
@@ -113,13 +109,13 @@ const updateBlog = async (req, res) => {
       });
     }
 
-    // Update blog fields
     blog.title = title || blog.title;
     blog.content = content || blog.content;
     blog.tags = tags || blog.tags;
     blog.updatedAt = Date.now();
 
     const updatedBlog = await blog.save();
+    await updatedBlog.populate("author", "username email"); // ✅ populate author
 
     res.status(200).json({
       success: true,
@@ -140,7 +136,6 @@ const updateBlog = async (req, res) => {
 // @access  Private
 const deleteBlog = async (req, res) => {
   try {
-    // Find blog and ensure it belongs to the user
     const blog = await Blog.findOne({ 
       _id: req.params.id, 
       author: req.user.id 
