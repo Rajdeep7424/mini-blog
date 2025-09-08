@@ -30,6 +30,67 @@ export const getBlogs = async () => {
   }
 };
 
+// Get all blogs (public, from all users)
+export const getAllBlogs = async () => {
+  try {
+    const res = await fetch(`${API_URL}/public`, {
+      method: 'GET',
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || 'Failed to fetch all blogs');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Get all blogs error:', error);
+    throw error;
+  }
+};
+
+// Get single blog (public)
+export const getPublicBlog = async (blogId) => {
+  try {
+    const res = await fetch(`${API_URL}/public/${blogId}`, {
+      method: 'GET',
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || 'Failed to fetch blog');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Get public blog error:', error);
+    throw error;
+  }
+};
+
+export const updateBlogStatus = async (id, isPublished) => {
+  try {
+    const res = await fetch(`${API_URL}/${id}`, {
+      method: "PATCH",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ isPublished }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to update blog status");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Update blog status error:", error);
+    throw error;
+  }
+};
+
 // Get single blog by ID
 export const getBlog = async (blogId) => {
   try {

@@ -46,6 +46,11 @@ export default function Navbar() {
               </NavLink>
             </li>
             <li>
+              <NavLink to="/myblogs" onClick={() => setIsOpen(false)}>
+                MyBlogs
+              </NavLink>
+            </li>
+            <li>
               <NavLink to="/createBlog" onClick={() => setIsOpen(false)}>
                 CreateBlog
               </NavLink>
