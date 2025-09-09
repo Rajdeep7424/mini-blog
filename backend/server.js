@@ -11,10 +11,11 @@ dotenv.config();
 // Create Express application
 const app = express();
 // Middleware - Fix CORS configuration
-// Simple CORS for development
 app.use(cors({
-  origin: true, // Allow all origins
-  credentials: true
+  origin: 'http://localhost:5173', // Your Vite frontend URL
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 // Middleware
 app.use(express.json());
