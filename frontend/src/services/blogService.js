@@ -30,10 +30,17 @@ export const getBlogs = async () => {
   }
 };
 
-// Get all blogs (public, from all users)
-export const getAllBlogs = async () => {
+// Get all blogs (public, from all users) with pagination
+export const getAllBlogs = async (page = 1, limit = 10, filters = {}) => {
   try {
-    const res = await fetch(`${API_URL}/public`, {
+    // Build query string with pagination and filters
+    const queryParams = new URLSearchParams({
+      page: page,
+      limit: limit,
+      ...filters
+    });
+
+    const res = await fetch(`${API_URL}/public?${queryParams}`, {
       method: 'GET',
     });
 
@@ -49,7 +56,6 @@ export const getAllBlogs = async () => {
     throw error;
   }
 };
-
 // Get single blog (public)
 export const getPublicBlog = async (blogId) => {
   try {

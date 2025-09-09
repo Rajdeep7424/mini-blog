@@ -1,3 +1,4 @@
+import { parse } from 'dotenv';
 import Blog from '../models/Blog.js';
 
 // @desc    Get all blogs for logged-in user
@@ -53,17 +54,54 @@ const getBlog = async (req, res) => {
   }
 };
 
-// @desc    Get all published blogs (from all users)
+// @desc    Get all published blogs with pagination
 // @route   GET /api/blogs/public
 // @access  Public
 const getAllBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find({ isPublished: true })
+    // Get pagination parameters from query string
+    const page = parseInt(req.query.page) || 1; // Current page (default: 1)
+    const limit = parseInt(req.query.limit) || 10; // Blogs per page (default: 10)
+    const skip = (page - 1) * limit; // Calculate how many blogs to skip
+
+    // Build query object for filtering (optional)
+    let query = { isPublished: true };
+    
+    // Optional: Filter by tags
+    if (req.query.tags) {
+      query.tags = { $in: req.query.tags.split(',') };
+    }
+    
+    // Optional: Filter by author
+    if (req.query.author) {
+      query.author = req.query.author;
+    }
+
+    // Get total count of blogs for pagination info
+    const totalBlogs = await Blog.countDocuments(query);
+    
+    // Calculate total pages
+    const totalPages = Math.ceil(totalBlogs / limit);
+
+    // Get blogs with pagination
+    const blogs = await Blog.find(query)
       .populate("author", "username email")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       success: true,
+      pagination: {
+        currentPage: page,
+        totalPages: totalPages,
+        totalBlogs: totalBlogs,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+        nextPage: page < totalPages ? page + 1 : null,
+        prevPage: page > 1 ? page - 1 : null,
+        limit: limit
+      },
       count: blogs.length,
       data: blogs
     });
