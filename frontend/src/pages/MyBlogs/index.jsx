@@ -28,6 +28,7 @@ export default function MyBlogList() {
   return (
     <div className={styles.container}>
       <button onClick={() => navigate('/createBlog')}>Create New Blog</button>
+      <h1>My Blogs</h1>
       {blogs.map((blog) => (
         <div
           className={styles.blog}

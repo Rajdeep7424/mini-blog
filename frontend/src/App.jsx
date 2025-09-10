@@ -12,6 +12,7 @@ import BlogDetails from './pages/BlogDetails/index';
 import MyBlogList from './pages/MyBlogs/index'
 import MyBlogDetails from './pages/MyBlogDetail'
 import EditBlog from './pages/EditBlog'
+import Account from './pages/Account/Account'
 
 function App() {
  
@@ -25,6 +26,7 @@ function App() {
 
         <Routes>
           <Route path='/' element={<Home/>}/>
+          <Route path='/account' element={<Account/>} />
           <Route path="/register" element={<Register/>}/>
           <Route path="/login" element={<Login/>}/>
           <Route path='/bloglist' element={<Bloglist/>}/> 

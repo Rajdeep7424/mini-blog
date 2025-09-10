@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-
+  
   return (
     <nav className={styles.nav}>
       <h1><NavLink to="/" onClick={() => setIsOpen(false)}>BlogPost</NavLink></h1>
@@ -56,7 +57,9 @@ export default function Navbar() {
               </NavLink>
             </li>
             <li>
-              <button onClick={logout}><NavLink to="/" onClick={() => setIsOpen(false)}>Logout</NavLink></button>
+              <NavLink to="/account" onClick={() => setIsOpen(false)}>
+                Account
+              </NavLink>
             </li>
           </>
         )}

@@ -46,6 +46,7 @@ const BlogList = () => {
   return (
     <div className={styles.container}>
       <button onClick={() => navigate('/createBlog')}>Create New Blog</button>
+      <h1>Blog feed</h1>
       {blogs.map((blog) => (
         <div
           className={styles.blog}

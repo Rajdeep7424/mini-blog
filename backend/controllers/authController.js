@@ -91,6 +91,8 @@ const loginUser = async (req, res) => {
   }
 };
 
+
+
 // @desc    Get current user data
 // @route   GET /api/auth/me
 // @access  Private (requires token)
