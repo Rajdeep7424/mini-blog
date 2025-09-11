@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getBlog, updateBlogStatus, deleteBlog } from "../../services/blogService";
+import { getBlog, updateBlogStatus, deleteBlog, updateBlog } from "../../services/blogService";
 import Message from "../../components/Message/Message";
 import styles from "./MyBlogDetail.module.css";
 
@@ -10,6 +10,11 @@ export default function MyBlogDetails() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    title: "",
+    content: ""
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,6 +25,10 @@ export default function MyBlogDetails() {
     try {
       const response = await getBlog(id);
       setBlog(response.data);
+      setEditForm({
+        title: response.data.title,
+        content: response.data.content
+      });
     } catch (error) {
       console.error("Error fetching blog details:", error);
       setMessage("Failed to load blog");
@@ -48,12 +57,46 @@ export default function MyBlogDetails() {
         await deleteBlog(id);
         setMessage("Blog deleted successfully");
         setMessageType("success");
-        setTimeout(() => navigate("/myblogs"), 1500); // Navigate after showing message
+        setTimeout(() => navigate("/myblogs"), 1500);
       } catch (error) {
         console.error("Error deleting blog:", error);
         setMessage("Failed to delete blog");
         setMessageType("error");
       }
+    }
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditForm({
+      title: blog.title,
+      content: blog.content
+    });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      const response = await updateBlog(id, editForm);
+      setBlog(response.data);
+      setMessage("Blog updated successfully");
+      setMessageType("success");
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating blog:", error);
+      setMessage(error.message || "Failed to update blog");
+      setMessageType("error");
     }
   };
 
@@ -79,34 +122,69 @@ export default function MyBlogDetails() {
       </button>
 
       <div className={styles.blogcard}>
-        <h2>{blog.title}</h2>
-        <p className={styles.blogmeta}>
-          ✍️ Author: {blog.author?.username || "Unknown"} | 📅{" "}
-          {new Date(blog.createdAt).toLocaleDateString()}
-        </p>
-        <p
-          className={`${styles.blogstatus} ${
-            blog.isPublished ? styles.published : styles.draft
-          }`}
-        >
-          📌 Status: {blog.isPublished ? "Published" : "Draft"}
-        </p>
+        {isEditing ? (
+          <>
+            <div className={styles.editForm}>
+              <input
+                type="text"
+                name="title"
+                value={editForm.title}
+                onChange={handleInputChange}
+                className={styles.titleInput}
+              />
+              <textarea
+                name="content"
+                value={editForm.content}
+                onChange={handleInputChange}
+                className={styles.contentTextarea}
+                rows="15"
+              />
+            </div>
+            
+            <div className={styles.editActions}>
+              <button onClick={handleSaveEdit} className={styles.saveBtn}>
+                Save Changes
+              </button>
+              <button onClick={handleCancelEdit} className={styles.cancelBtn}>
+                Cancel
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <h2>{blog.title}</h2>
+            <p className={styles.blogmeta}>
+              ✍️ Author: {blog.author?.username || "Unknown"} | 📅{" "}
+              {new Date(blog.createdAt).toLocaleDateString()}
+            </p>
+            <p
+              className={`${styles.blogstatus} ${
+                blog.isPublished ? styles.published : styles.draft
+              }`}
+            >
+              📌 Status: {blog.isPublished ? "Published" : "Draft"}
+            </p>
 
-        <div className={styles.blogcontent}>
-          {blog.content}
-        </div>
+            <div className={styles.blogcontent}>
+              {blog.content}
+            </div>
 
-        <div className={styles.actions}>
-          <button 
-            onClick={handleToggleStatus}
-            className={blog.isPublished ? styles.unpublishBtn : styles.publishBtn}
-          >
-            {blog.isPublished ? "Unpublish" : "Publish"}
-          </button>
-          <button onClick={handleDelete} className={styles.deletebtn}>
-            Delete
-          </button>
-        </div>
+            <div className={styles.actions}>
+              <button 
+                onClick={handleToggleStatus}
+                className={blog.isPublished ? styles.unpublishBtn : styles.publishBtn}
+              >
+                {blog.isPublished ? "Unpublish" : "Publish"}
+              </button>
+              <button onClick={handleEdit} className={styles.editBtn}>
+                Edit
+              </button>
+              <button onClick={handleDelete} className={styles.deletebtn}>
+                Delete
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
