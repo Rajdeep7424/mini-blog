@@ -99,9 +99,6 @@ export function AuthProvider({ children }) {
   };
 
   // updateuser
-
-  
-  // Add this function
   const updateUser = (newUserData) => {
     setUser(newUserData);
     localStorage.setItem("user", JSON.stringify(newUserData));

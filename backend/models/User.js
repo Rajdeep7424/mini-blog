@@ -6,41 +6,43 @@ const userSchema = mongoose.Schema(
     // Username field
     username: {
       type: String,
-      required: [true, 'Please add a username'], // Required with custom error message
-      unique: true, // Ensures no duplicate usernames
-      trim: true, // Removes whitespace from both ends
-      minlength: [3, 'Username must be at least 3 characters'], // Minimum length validation
-      maxlength: [30, 'Username cannot exceed 30 characters'], // Maximum length validation
+      required: [true, 'Please add a username'],
+      unique: true,
+      trim: true,
+      minlength: [3, 'Username must be at least 3 characters'],
+      maxlength: [30, 'Username cannot exceed 30 characters'],
     },
     // Email field
     email: {
       type: String,
       required: [true, 'Please add an email'],
-      unique: true, // Ensures no duplicate emails
+      unique: true,
       trim: true,
-      lowercase: true, // Converts email to lowercase before saving
+      lowercase: true,
       match: [
-        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, // Regex pattern for email validation
+        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
         'Please add a valid email',
       ],
     },
     // Password field
+    password: {
+      type: String,
+      required: [true, 'Please add a password'],
+      minlength: [6, 'Password must be at least 6 characters'],
+      select: false, // requires `.select('+password')` when fetching
+    },
 
-password: {
-  type: String,
-  required: [true, 'Please add a password'],
-  minlength: [6, 'Password must be at least 6 characters'],
-  select: false, // This is what requires .select('+password')
-},
+    // 🔑 Reset password fields
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
   {
-    // Schema options
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
+    timestamps: true, // Automatically adds createdAt and updatedAt
   }
 );
 
 // Create User model from the schema
 const User = mongoose.model('User', userSchema);
 
-// Export User model to use in other files
+// Export User model
 export default User;

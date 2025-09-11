@@ -5,7 +5,7 @@ import Home from './pages/Home'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Register from './pages/register/index'
-import Login from './pages/login/index'
+import Login from './pages/Login/index'
 import Bloglist from './pages/BlogList/index'
 import CreateBlog from './pages/CreateBlog'
 import BlogDetails from './pages/BlogDetails/index';
@@ -13,6 +13,8 @@ import MyBlogList from './pages/MyBlogs/index'
 import MyBlogDetails from './pages/MyBlogDetail'
 import EditBlog from './pages/EditBlog'
 import Account from './pages/Account/Account'
+import ForgotPassword from './pages/auth/ForgetPassword'
+import ResetPassword from './pages/auth/ResetPassword'
 
 function App() {
  
@@ -35,6 +37,8 @@ function App() {
           <Route path='/edit/:id' element={<EditBlog/>}/>
           <Route path='/createBlog' element={<CreateBlog/>}/>
           <Route path="/blogs/:id" element={<BlogDetails />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         </Routes>
 

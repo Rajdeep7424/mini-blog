@@ -21,9 +21,8 @@ export default function Login() {
     setError("");
 
     try {
-      // Pass the formData object, not separate arguments
       const user = await login(formData);
-      
+
       if (user) {
         setFormData({ email: "", password: "" });
         navigate("/");
@@ -62,6 +61,11 @@ export default function Login() {
           <button type="submit">Submit</button>
           <NavLink to="/register">← Don&apos;t have an account?</NavLink>
         </span>
+
+        {/* 🔑 Forgot password link */}
+        <p style={{ marginTop: "10px" }}>
+          <NavLink to="/forgot-password">Forgot Password?</NavLink>
+        </p>
       </form>
     </>
   );
