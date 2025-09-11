@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, loginUser, getMe } from '../controllers/authController.js';
+import { registerUser, loginUser, getMe, updateUsername } from '../controllers/authController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 // Create router object
@@ -19,6 +19,8 @@ router.post('/login', loginUser);
 // @desc    Get current user data
 // @access  Private (requires authentication)
 router.get('/me', protect, getMe);
+
+router.put("/profile/username", protect, updateUsername);
 
 // Export router to use in server.js
 export default router;

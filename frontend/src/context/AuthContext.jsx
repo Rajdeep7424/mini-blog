@@ -98,6 +98,16 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // updateuser
+
+  
+  // Add this function
+  const updateUser = (newUserData) => {
+    setUser(newUserData);
+    localStorage.setItem("user", JSON.stringify(newUserData));
+  };
+  
+
   // Logout function
   const logout = () => {
     setUser(null);
@@ -125,6 +135,7 @@ export function AuthProvider({ children }) {
     login,
     register,
     logout,
+    updateUser,
     isAuthenticated: !!user && !!token && !isTokenExpired(),
   };
 

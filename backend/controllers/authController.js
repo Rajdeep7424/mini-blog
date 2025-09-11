@@ -106,4 +106,37 @@ const getMe = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser, getMe };
+// Controller: update username
+const updateUsername = async (req, res) => {
+  try {
+    const { username } = req.body;
+
+    // Use the authenticated user's ID from the token
+    let user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update username
+    user.username = username;
+    await user.save();
+
+    res.status(200).json({
+      message: "Username updated successfully",
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+
+export { registerUser, loginUser, getMe, updateUsername };
