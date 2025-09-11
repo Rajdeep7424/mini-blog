@@ -73,9 +73,23 @@ export default function Account() {
         if (updateUser) updateUser(data.user);
       } else {
         setMessageType("error");
-        setMessage(data.message || `Failed to update ${editingField}`);
+        // Check if it's a duplicate username error (from server response)
+        if (data.error && data.error.includes('duplicate key error') && data.error.includes('username')) {
+          setMessage("Username already exists. Please choose a different one.");
+        } 
+        // Check if server returned a specific message about username already existing
+        else if (data.message && data.message.toLowerCase().includes('already exists')) {
+          setMessage("Username already exists. Please choose a different one.");
+        } 
+        // Check for the specific error format from your console
+        else if (data.error && data.error.includes('E11000 duplicate key error')) {
+          setMessage("Username already exists. Please choose a different one.");
+        }
+        else {
+          setMessage(data.message || "Failed to update username");
+        }
       }
-    } catch (err) {
+    }catch (err) {
       console.error(err);
       setMessageType("error");
       setMessage("Server error while updating");
