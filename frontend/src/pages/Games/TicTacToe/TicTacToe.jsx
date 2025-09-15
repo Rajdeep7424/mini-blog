@@ -58,7 +58,12 @@ export default function TicTacToe() {
   const [gameBoard, setGameBoard] = useState(() => Array(9).fill(""));
   const [currentPlayer, setCurrentPlayer] = useState("X"); // 'X' always starts
   const [gameActive, setGameActive] = useState(true);
-  const [scores, setScores] = useState({ X: 0, O: 0, T: 0 });
+
+  const [scores, setScores] = useState({
+    twoPlayer: { playerX: 0, playerO: 0, ties: 0 },
+    vsComputer: { playerX: 0, computer: 0, ties: 0 },
+  });
+
   const [winningCombo, setWinningCombo] = useState([]);
   const [gameMode, setGameMode] = useState("2player"); // '2player' | 'vsComputer'
   const [isComputerThinking, setIsComputerThinking] = useState(false);
@@ -68,9 +73,10 @@ export default function TicTacToe() {
   const statusMessage = useMemo(() => {
     if (!gameActive && winningCombo.length) {
       const winner = gameBoard[winningCombo[0]];
-      if (gameMode === "vsComputer" && winner === "O") return "Computer wins!";
-      if (winner === "X") return "Player X wins!";
-      return "Player O wins!";
+      if (gameMode === "vsComputer") {
+        return winner === "O" ? "Computer wins!" : "You win!";
+      }
+      return winner === "X" ? "Player X wins!" : "Player O wins!";
     }
     if (!gameActive) return "Game ended in a draw!";
     if (gameMode === "2player") return `Player ${currentPlayer}'s turn`;
@@ -79,46 +85,87 @@ export default function TicTacToe() {
     return "Computer thinking...";
   }, [gameActive, winningCombo, gameBoard, currentPlayer, gameMode]);
 
+  /* ---------- Update scores when game ends ---------- */
+  useEffect(() => {
+    const win = checkWin(gameBoard);
+    if (win) {
+      setGameActive(false);
+      setWinningCombo(win);
+
+      const winnerSymbol = gameBoard[win[0]];
+
+      setScores((prev) => {
+        if (gameMode === "vsComputer") {
+          return {
+            ...prev,
+            vsComputer: winnerSymbol === "X"
+              ? { ...prev.vsComputer, playerX: prev.vsComputer.playerX + 1 }
+              : { ...prev.vsComputer, computer: prev.vsComputer.computer + 1 },
+          };
+        } else {
+          return {
+            ...prev,
+            twoPlayer: winnerSymbol === "X"
+              ? { ...prev.twoPlayer, playerX: prev.twoPlayer.playerX + 1 }
+              : { ...prev.twoPlayer, playerO: prev.twoPlayer.playerO + 1 },
+          };
+        }
+      });
+      return;
+    }
+
+    if (checkDraw(gameBoard)) {
+      setGameActive(false);
+      setWinningCombo([]);
+
+      setScores((prev) => {
+        if (gameMode === "vsComputer") {
+          return {
+            ...prev,
+            vsComputer: { ...prev.vsComputer, ties: prev.vsComputer.ties + 1 },
+          };
+        } else {
+          return {
+            ...prev,
+            twoPlayer: { ...prev.twoPlayer, ties: prev.twoPlayer.ties + 1 },
+          };
+        }
+      });
+    }
+  }, [gameBoard, gameMode]);
+
   /* ---------- Human click handler ---------- */
   const handleCellClick = useCallback((index) => {
     if (gameBoard[index] !== "" || !gameActive || isComputerThinking) return;
     if (gameMode === "vsComputer" && currentPlayer !== "X") return;
 
-    // Apply the move
     setGameBoard((prev) => {
       const next = [...prev];
       next[index] = currentPlayer;
       return next;
     });
-    
-    // Track last move for animation
-    setLastMove(index);
 
-    // Switch turn immediately after making a valid move
+    setLastMove(index);
     setCurrentPlayer((p) => (p === "X" ? "O" : "X"));
   }, [gameBoard, gameActive, isComputerThinking, gameMode, currentPlayer]);
 
   /* ---------- Computer move effect ---------- */
   useEffect(() => {
-    // Only run if it's computer's turn in vsComputer mode and game is active
     if (gameMode !== "vsComputer" || currentPlayer !== "O" || !gameActive) return;
 
     setIsComputerThinking(true);
-    
+
     const timer = setTimeout(() => {
       setGameBoard((prev) => {
         const move = getComputerMove(prev);
         if (move < 0) return prev;
-        
+
         const next = [...prev];
         next[move] = "O";
-        
-        // Track computer's move for animation
         setLastMove(move);
         return next;
       });
 
-      // After the computer places, give turn back to player
       setCurrentPlayer("X");
       setIsComputerThinking(false);
     }, 350);
@@ -127,27 +174,7 @@ export default function TicTacToe() {
       clearTimeout(timer);
       setIsComputerThinking(false);
     };
-  }, [gameMode, currentPlayer, gameActive]); // Removed isComputerThinking from dependencies
-
-  /* ---------- Watch board for result (win/draw) ---------- */
-  useEffect(() => {
-    const win = checkWin(gameBoard);
-    if (win) {
-      setGameActive(false);
-      setWinningCombo(win);
-
-      // Determine the winner symbol directly from the board to avoid race with currentPlayer
-      const winnerSymbol = gameBoard[win[0]];
-      setScores((prev) => ({ ...prev, [winnerSymbol]: prev[winnerSymbol] + 1 }));
-      return;
-    }
-
-    if (checkDraw(gameBoard)) {
-      setGameActive(false);
-      setWinningCombo([]);
-      setScores((prev) => ({ ...prev, T: prev.T + 1 }));
-    }
-  }, [gameBoard]);
+  }, [gameMode, currentPlayer, gameActive]);
 
   /* ---------- Controls ---------- */
   const restartGame = useCallback(() => {
@@ -159,10 +186,25 @@ export default function TicTacToe() {
     setLastMove(null);
   }, []);
 
-  const resetScores = useCallback(() => {
-    setScores({ X: 0, O: 0, T: 0 });
-    restartGame();
-  }, [restartGame]);
+const resetScores = useCallback(() => {
+  setScores((prev) => {
+    if (gameMode === "2player") {
+      return {
+        ...prev,
+        twoPlayer: { playerX: 0, playerO: 0, ties: 0 },
+      };
+    }
+    if (gameMode === "vsComputer") {
+      return {
+        ...prev,
+        vsComputer: { playerX: 0, computer: 0, ties: 0 },
+      };
+    }
+    return prev;
+  });
+  restartGame();
+}, [restartGame, gameMode]);
+
 
   const changeGameMode = useCallback((mode) => {
     setGameMode(mode);
@@ -183,7 +225,7 @@ export default function TicTacToe() {
   return (
     <div className={styles.ticTacToe}>
       <h1 className={styles.title}>Tic Tac Toe</h1>
-      
+
       {/* Mode */}
       <div className={styles.gameModeSelector}>
         <button
@@ -228,18 +270,37 @@ export default function TicTacToe() {
 
       {/* Scores */}
       <div className={styles.scoreBoard}>
-        <div className={`${styles.score} ${currentPlayer === 'X' && gameActive ? styles.activePlayer : ''}`}>
-          <span className={styles.scoreLabel}>{gameMode === "vsComputer" ? "You" : "Player X"}</span>
-          <span className={styles.scoreValue}>{scores.X}</span>
-        </div>
-        <div className={styles.score}>
-          <span className={styles.scoreLabel}>Ties</span>
-          <span className={styles.scoreValue}>{scores.T}</span>
-        </div>
-        <div className={`${styles.score} ${currentPlayer === 'O' && gameActive ? styles.activePlayer : ''}`}>
-          <span className={styles.scoreLabel}>{gameMode === "vsComputer" ? "Computer" : "Player O"}</span>
-          <span className={styles.scoreValue}>{scores.O}</span>
-        </div>
+        {gameMode === "2player" ? (
+          <>
+            <div className={`${styles.score} ${currentPlayer === 'X' && gameActive ? styles.activePlayer : ''}`}>
+              <span className={styles.scoreLabel}>Player X</span>
+              <span className={styles.scoreValue}>{scores.twoPlayer.playerX}</span>
+            </div>
+            <div className={styles.score}>
+              <span className={styles.scoreLabel}>Ties</span>
+              <span className={styles.scoreValue}>{scores.twoPlayer.ties}</span>
+            </div>
+            <div className={`${styles.score} ${currentPlayer === 'O' && gameActive ? styles.activePlayer : ''}`}>
+              <span className={styles.scoreLabel}>Player O</span>
+              <span className={styles.scoreValue}>{scores.twoPlayer.playerO}</span>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className={`${styles.score} ${currentPlayer === 'X' && gameActive ? styles.activePlayer : ''}`}>
+              <span className={styles.scoreLabel}>You</span>
+              <span className={styles.scoreValue}>{scores.vsComputer.playerX}</span>
+            </div>
+            <div className={styles.score}>
+              <span className={styles.scoreLabel}>Ties</span>
+              <span className={styles.scoreValue}>{scores.vsComputer.ties}</span>
+            </div>
+            <div className={`${styles.score} ${currentPlayer === 'O' && gameActive ? styles.activePlayer : ''}`}>
+              <span className={styles.scoreLabel}>Computer</span>
+              <span className={styles.scoreValue}>{scores.vsComputer.computer}</span>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Controls */}
