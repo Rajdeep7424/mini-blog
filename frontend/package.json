@@ -26,6 +26,7 @@
     "nodemailer": "^7.0.6",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.8.2"
+    "react-router-dom": "^7.8.2",
+    "socket.io-client": "^4.8.1"
   }
 }

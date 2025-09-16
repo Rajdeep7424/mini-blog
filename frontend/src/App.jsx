@@ -17,6 +17,7 @@ import ForgotPassword from './pages/auth/ForgetPassword'
 import ResetPassword from './pages/auth/ResetPassword'
 import Games from './pages/Games/Games'
 import TicTacToe from './pages/Games/TicTacToe/TicTacToe'
+import Multiplayer from './pages/Games/TicTacToe/Multiplayer'
 function App() {
  
 
@@ -34,6 +35,7 @@ function App() {
           <Route path="/login" element={<Login/>}/>
           <Route path="/games" element={<Games/>}/>
           <Route path="/tictactoe" element={<TicTacToe/>}/>
+          <Route path="/multiplayer" element={<Multiplayer/>}/>
           <Route path='/bloglist' element={<Bloglist/>}/> 
           <Route path='/myblogs' element={<MyBlogList/>}/>
           <Route path='/myblogs/:id' element={<MyBlogDetails/>}/>

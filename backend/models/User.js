@@ -1,9 +1,9 @@
+// backend/models/User.js
 import mongoose from 'mongoose';
 
 // Create User Schema definition
 const userSchema = mongoose.Schema(
   {
-    // Username field
     username: {
       type: String,
       required: [true, 'Please add a username'],
@@ -12,7 +12,6 @@ const userSchema = mongoose.Schema(
       minlength: [3, 'Username must be at least 3 characters'],
       maxlength: [30, 'Username cannot exceed 30 characters'],
     },
-    // Email field
     email: {
       type: String,
       required: [true, 'Please add an email'],
@@ -24,25 +23,33 @@ const userSchema = mongoose.Schema(
         'Please add a valid email',
       ],
     },
-    // Password field
     password: {
       type: String,
       required: [true, 'Please add a password'],
       minlength: [6, 'Password must be at least 6 characters'],
-      select: false, // requires `.select('+password')` when fetching
+      select: false,
     },
 
-    // 🔑 Reset password fields
+    // Reset password fields
     resetPasswordToken: String,
     resetPasswordExpire: Date,
+
+    // NEW: multiplayer status & pointer to current match (if any)
+    status: {
+      type: String,
+      enum: ['offline', 'online', 'waiting', 'in-game'],
+      default: 'offline',
+    },
+    currentMatch: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Match',
+      default: null,
+    },
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt
+    timestamps: true,
   }
 );
 
-// Create User model from the schema
 const User = mongoose.model('User', userSchema);
-
-// Export User model
 export default User;

@@ -15,6 +15,11 @@ return(
                     TicTacToe
                 </NavLink>
             </li>
+            <li>
+                <NavLink to="/multiplayer" onClick={() => setIsOpen(false)}>
+                    Multiplayer
+                </NavLink>
+            </li>
         </>)}
     </div>
     )

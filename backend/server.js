@@ -46,5 +46,14 @@ const startServer = async () => {
     process.exit(1); // Exit process if DB connection fails
   }
 };
+// backend/server.js (or entry file)
+import http from 'http';
+import { initSocket } from './socket/index.js';
+import gameSocket from './socket/gameSocket.js'; // next file
+
+const server = http.createServer(app);
+const io = initSocket(server);
+gameSocket(io);
+server.listen(PORT, () => console.log(`Server listening on ${PORT}`));
 
 startServer();
