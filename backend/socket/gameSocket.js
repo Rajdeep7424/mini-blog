@@ -12,7 +12,7 @@ export default function(io) {
     socket.on('register', async ({ userId }) => {
       try {
         if (!mongoose.Types.ObjectId.isValid(userId)) throw new Error('Invalid userId');
-        socket.userId = new mongoose.Types.ObjectId(userId); // ✅ use new
+        socket.userId = new mongoose.Types.ObjectId(userId);
         await User.findByIdAndUpdate(socket.userId, { socketId: socket.id, status: 'online' });
         console.log(`User ${userId} registered with socket ${socket.id}`);
       } catch (err) {
@@ -24,12 +24,10 @@ export default function(io) {
     socket.on('requestMatch', async ({ userId, game }) => {
       try {
         if (!mongoose.Types.ObjectId.isValid(userId)) throw new Error('Invalid userId');
-        const playerId = new mongoose.Types.ObjectId(userId); // ✅ use new
+        const playerId = new mongoose.Types.ObjectId(userId);
 
-        // Add player to matchmaking
         const waiting = await Matchmaking.create({ playerId, game, socketId: socket.id });
 
-        // Find partner
         const partner = await Matchmaking.findOneAndDelete({
           game,
           playerId: { $ne: playerId }
@@ -60,7 +58,6 @@ export default function(io) {
             { $set: { status: 'in-game', currentMatch: match._id } }
           );
 
-          // Notify sockets
           const socketsToNotify = [];
           if (partner.socketId) socketsToNotify.push(partner.socketId);
           if (waiting.socketId) socketsToNotify.push(waiting.socketId);
@@ -91,7 +88,6 @@ export default function(io) {
         if (!match || match.result.status === 'finished') return;
 
         const playerObjId = new mongoose.Types.ObjectId(userId);
-
         if (!match.gameState.turn.equals(playerObjId)) return;
 
         const symbolObj = match.playerSymbols.find(ps => ps.player.equals(playerObjId));
@@ -139,6 +135,42 @@ export default function(io) {
       } catch (err) {
         console.error('makeMove error:', err.message);
       }
+    });
+
+    // --- Offer draw ---
+    socket.on('offerDraw', ({ matchId, from }) => {
+      socket.to(matchId).emit('drawOffered', { from });
+    });
+
+    // --- Cancel draw ---
+    socket.on('cancelDraw', ({ matchId }) => {
+      socket.to(matchId).emit('drawCanceled');
+    });
+
+    // --- Accept draw ---
+    socket.on('acceptDraw', async ({ matchId }) => {
+      try {
+        if (!mongoose.Types.ObjectId.isValid(matchId)) return;
+        const match = await Match.findById(matchId);
+        if (!match || match.result.status === 'finished') return;
+
+        match.result = { winner: null, status: 'finished', reason: 'draw' };
+        await match.save();
+
+        await User.updateMany(
+          { _id: { $in: match.players } },
+          { $set: { status: 'online', currentMatch: null } }
+        );
+
+        io.to(matchId).emit('gameFinished', { match });
+      } catch (err) {
+        console.error('acceptDraw error:', err.message);
+      }
+    });
+
+    // --- Refuse draw ---
+    socket.on('refuseDraw', ({ matchId }) => {
+      socket.to(matchId).emit('drawRefused');
     });
 
     // --- Disconnect ---
