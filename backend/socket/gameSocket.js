@@ -20,58 +20,63 @@ export default function(io) {
       }
     });
 
-    // --- Request matchmaking ---
-    socket.on('requestMatch', async ({ userId, game }) => {
-      try {
-        if (!mongoose.Types.ObjectId.isValid(userId)) throw new Error('Invalid userId');
-        const playerId = new mongoose.Types.ObjectId(userId);
+// --- Request matchmaking ---
+socket.on('requestMatch', async ({ userId, game }) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) throw new Error('Invalid userId');
 
-        const waiting = await Matchmaking.create({ playerId, game, socketId: socket.id });
+    // Current player
+    const currentUser = await User.findById(userId);
+    if (!currentUser) throw new Error('User not found');
 
-        const partner = await Matchmaking.findOneAndDelete({
-          game,
-          playerId: { $ne: playerId }
-        }, { sort: { createdAt: 1 } });
+    const waiting = await Matchmaking.create({ playerId: currentUser._id, game, socketId: socket.id });
 
-        if (partner) {
-          await Matchmaking.findByIdAndDelete(waiting._id);
+    const partner = await Matchmaking.findOneAndDelete(
+      { game, playerId: { $ne: currentUser._id } },
+      { sort: { createdAt: 1 } }
+    );
 
-          const p1 = playerId;
-          const p2 = partner.playerId;
-          const first = Math.random() < 0.5 ? p1 : p2;
+    if (partner) {
+      await Matchmaking.findByIdAndDelete(waiting._id);
 
-          const playerSymbols = [
-            { player: p1, symbol: first.equals(p1) ? 'X' : 'O' },
-            { player: p2, symbol: first.equals(p2) ? 'X' : 'O' }
-          ];
+      const user1 = currentUser;
+      const user2 = await User.findById(partner.playerId);
+      if (!user2) throw new Error('Partner not found');
 
-          const match = await Match.create({
-            game,
-            players: [p1, p2],
-            playerSymbols,
-            gameState: { board: Array(9).fill(null), turn: first },
-            result: { status: 'ongoing', winner: null }
-          });
+      const first = Math.random() < 0.5 ? user1._id : user2._id;
 
-          await User.updateMany(
-            { _id: { $in: [p1, p2] } },
-            { $set: { status: 'in-game', currentMatch: match._id } }
-          );
+      const playerSymbols = [
+        { player: user1._id, symbol: first.equals(user1._id) ? "X" : "O", username: user1.username },
+        { player: user2._id, symbol: first.equals(user2._id) ? "X" : "O", username: user2.username }
+      ];
 
-          const socketsToNotify = [];
-          if (partner.socketId) socketsToNotify.push(partner.socketId);
-          if (waiting.socketId) socketsToNotify.push(waiting.socketId);
+      const match = await Match.create({
+        game,
+        players: [user1._id, user2._id],
+        playerSymbols,
+        gameState: { board: Array(9).fill(null), turn: first },
+        result: { status: "ongoing", winner: null }
+      });
 
-          socketsToNotify.forEach(sid => io.to(sid).emit('matchFound', { match }));
-          io.to(match._id.toString()).emit('matchFound', { match });
+      await User.updateMany(
+        { _id: { $in: [user1._id, user2._id] } },
+        { $set: { status: "in-game", currentMatch: match._id } }
+      );
 
-        } else {
-          io.to(socket.id).emit('waiting', { waiting: true });
-        }
-      } catch (err) {
-        console.error('requestMatch error:', err.message);
-      }
-    });
+      // Notify both sockets
+      [partner.socketId, waiting.socketId].forEach((sid) => {
+        if (sid) io.to(sid).emit("matchFound", { match });
+      });
+
+    } else {
+      io.to(socket.id).emit("waiting", { waiting: true });
+    }
+  } catch (err) {
+    console.error("requestMatch error:", err.message);
+  }
+});
+
+
 
     // --- Join match room ---
     socket.on('joinMatchRoom', ({ matchId, userId }) => {
@@ -81,66 +86,129 @@ export default function(io) {
     });
 
     // --- Handle player moves ---
-    socket.on('makeMove', async ({ matchId, userId, index }) => {
-      try {
-        if (!mongoose.Types.ObjectId.isValid(matchId) || !mongoose.Types.ObjectId.isValid(userId)) return;
-        const match = await Match.findById(matchId);
-        if (!match || match.result.status === 'finished') return;
+socket.on('makeMove', async ({ matchId, userId, index }) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(matchId) || !mongoose.Types.ObjectId.isValid(userId)) return;
+    const match = await Match.findById(matchId);
+    if (!match || match.result.status === 'finished') return;
 
-        const playerObjId = new mongoose.Types.ObjectId(userId);
-        if (!match.gameState.turn.equals(playerObjId)) return;
+    const playerObjId = new mongoose.Types.ObjectId(userId);
+    if (!match.gameState.turn.equals(playerObjId)) return;
 
-        const symbolObj = match.playerSymbols.find(ps => ps.player.equals(playerObjId));
-        if (!symbolObj) return;
-        const symbol = symbolObj.symbol;
+    const symbolObj = match.playerSymbols.find(ps => ps.player.equals(playerObjId));
+    if (!symbolObj) return;
+    const symbol = symbolObj.symbol;
 
-        if (match.gameState.board[index] !== null) return;
+    if (match.gameState.board[index] !== null) return;
 
-        match.gameState.board[index] = symbol;
-        match.gameState.moves.push({ player: playerObjId, index, symbol });
+    match.gameState.board[index] = symbol;
+    match.gameState.moves.push({ player: playerObjId, index, symbol });
 
-        const WINNING = [
-          [0,1,2],[3,4,5],[6,7,8],
-          [0,3,6],[1,4,7],[2,5,8],
-          [0,4,8],[2,4,6]
-        ];
-        const checkWinner = (board, sym) => WINNING.some(c => c.every(i => board[i] === sym));
+    const WINNING = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+    const checkWinner = (board, sym) => WINNING.some(c => c.every(i => board[i] === sym));
 
-        if (checkWinner(match.gameState.board, symbol)) {
-          match.result = { winner: playerObjId, status: 'finished', reason: 'win' };
-          await match.save();
-          await User.updateMany({ _id: { $in: match.players }}, { $set: { status: 'online', currentMatch: null }});
-          io.to(matchId).emit('gameFinished', { match });
-          return;
-        }
+    if (checkWinner(match.gameState.board, symbol)) {
+      match.result = { winner: playerObjId, status: 'finished', reason: 'win' };
+      await match.save();
+      await User.updateMany({ _id: { $in: match.players }}, { $set: { status: 'online', currentMatch: null }});
 
-        if (!match.gameState.board.includes(null)) {
-          match.result = { winner: null, status: 'finished', reason: 'draw' };
-          await match.save();
-          await User.updateMany({ _id: { $in: match.players }}, { $set: { status: 'online', currentMatch: null }});
-          io.to(matchId).emit('gameFinished', { match });
-          return;
-        }
+      io.to(matchId).emit('gameFinished', { match });
 
-        const other = match.players.find(p => !p.equals(playerObjId));
-        match.gameState.turn = other;
-        await match.save();
-
-        io.to(matchId).emit('moveMade', {
-          board: match.gameState.board,
-          turn: match.gameState.turn,
-          moves: match.gameState.moves
-        });
-
-      } catch (err) {
-        console.error('makeMove error:', err.message);
+      // Clear timer if game ends
+      if (moveTimers.has(matchId)) {
+        clearTimeout(moveTimers.get(matchId));
+        moveTimers.delete(matchId);
       }
+      return;
+    }
+
+    if (!match.gameState.board.includes(null)) {
+      match.result = { winner: null, status: 'finished', reason: 'draw' };
+      await match.save();
+      await User.updateMany({ _id: { $in: match.players }}, { $set: { status: 'online', currentMatch: null }});
+
+      io.to(matchId).emit('gameFinished', { match });
+
+      // Clear timer if game ends
+      if (moveTimers.has(matchId)) {
+        clearTimeout(moveTimers.get(matchId));
+        moveTimers.delete(matchId);
+      }
+      return;
+    }
+
+    const other = match.players.find(p => !p.equals(playerObjId));
+    match.gameState.turn = other;
+    await match.save();
+
+    io.to(matchId).emit('moveMade', {
+      board: match.gameState.board,
+      turn: match.gameState.turn,
+      moves: match.gameState.moves
     });
 
-    // --- Offer draw ---
-    socket.on('offerDraw', ({ matchId, from }) => {
-      socket.to(matchId).emit('drawOffered', { from });
-    });
+    // 🔥 Reset and start timer for the next player
+    if (moveTimers.has(matchId)) {
+      clearTimeout(moveTimers.get(matchId));
+    }
+    const timer = setTimeout(async () => {
+      try {
+        const expiredMatch = await Match.findById(matchId);
+        if (!expiredMatch || expiredMatch.result.status !== 'ongoing') return;
+
+        // Auto win for opponent
+        expiredMatch.result = { winner: playerObjId, status: 'finished', reason: 'timeout' };
+        await expiredMatch.save();
+
+        await User.updateMany(
+          { _id: { $in: expiredMatch.players } },
+          { $set: { status: 'online', currentMatch: null } }
+        );
+
+        io.to(matchId).emit('gameFinished', { match: expiredMatch });
+        moveTimers.delete(matchId);
+      } catch (err) {
+        console.error("timeout auto-win error:", err.message);
+      }
+    }, 30000); // 30 sec
+
+    moveTimers.set(matchId, timer);
+
+  } catch (err) {
+    console.error('makeMove error:', err.message);
+  }
+});
+
+
+// --- Offer draw ---
+socket.on('offerDraw', async ({ matchId, from }) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(matchId)) return;
+    const match = await Match.findById(matchId);
+
+    // Check if match exists and is ongoing
+    if (!match || match.result.status !== 'ongoing') {
+      io.to(socket.id).emit("errorMessage", { message: "⚠️ Cannot offer draw: match not active" });
+      return;
+    }
+
+    // Ensure the player offering draw is part of the match
+    if (!match.players.some(p => p.equals(socket.userId))) {
+      io.to(socket.id).emit("errorMessage", { message: "⚠️ You are not part of this match" });
+      return;
+    }
+
+    // Broadcast draw offer only to the opponent
+    socket.to(matchId).emit("drawOffered", { from });
+  } catch (err) {
+    console.error("offerDraw error:", err.message);
+  }
+});
+
 
     // --- Cancel draw ---
     socket.on('cancelDraw', ({ matchId }) => {

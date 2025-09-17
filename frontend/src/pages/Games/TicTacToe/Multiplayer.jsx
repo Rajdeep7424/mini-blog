@@ -6,14 +6,21 @@ import styles from "./TicTacToe.module.css";
 export default function TicTacToe() {
   const { socket, match, makeMove, playerId } = useGame();
   const { user } = useAuth();
+
   const [board, setBoard] = useState(Array(9).fill(null));
   const [turn, setTurn] = useState(null);
   const [opponentName, setOpponentName] = useState("");
   const [opponentSymbol, setOpponentSymbol] = useState("");
   const [gameResult, setGameResult] = useState("");
-  const [drawOffered, setDrawOffered] = useState(false); // this player offered
-  const [incomingDrawOffer, setIncomingDrawOffer] = useState(null); // opponent offered
-  const [drawRefusedMsg, setDrawRefusedMsg] = useState(""); // message if draw is refused
+  const [drawOffered, setDrawOffered] = useState(false); 
+  const [incomingDrawOffer, setIncomingDrawOffer] = useState(null); 
+  const [drawRefusedMsg, setDrawRefusedMsg] = useState(""); 
+  const [searching, setSearching] = useState(false); 
+  const [errorMessage, setErrorMessage] = useState(""); 
+
+  // Timer from server
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [currentTimerPlayer, setCurrentTimerPlayer] = useState(null);
 
   // Set initial board & turn when match found
   useEffect(() => {
@@ -31,9 +38,10 @@ export default function TicTacToe() {
     setDrawOffered(false);
     setIncomingDrawOffer(null);
     setDrawRefusedMsg("");
+    setSearching(false);
   }, [match, playerId]);
 
-  // Listen for live moves, draw offers, and draw refusals
+  // Listen for server events
   useEffect(() => {
     if (!socket) return;
 
@@ -53,6 +61,7 @@ export default function TicTacToe() {
       setDrawOffered(false);
       setIncomingDrawOffer(null);
       setDrawRefusedMsg("");
+      setTimeLeft(0);
     };
 
     const handleDrawOffered = ({ from }) => {
@@ -73,11 +82,28 @@ export default function TicTacToe() {
       setDrawRefusedMsg("❌ Your draw offer was refused");
     };
 
+    const handleWaiting = () => {
+      setSearching(true);
+    };
+
+    const handleErrorMessage = ({ message }) => {
+      setErrorMessage(message);
+      setTimeout(() => setErrorMessage(""), 3000);
+    };
+
+    const handleTimerUpdate = ({ timeLeft, currentPlayer }) => {
+      setTimeLeft(timeLeft);
+      setCurrentTimerPlayer(currentPlayer);
+    };
+
     socket.on("moveMade", handleMove);
     socket.on("gameFinished", handleGameFinished);
     socket.on("drawOffered", handleDrawOffered);
     socket.on("drawCanceled", handleDrawCanceled);
     socket.on("drawRefused", handleDrawRefused);
+    socket.on("waiting", handleWaiting);
+    socket.on("errorMessage", handleErrorMessage);
+    socket.on("timerUpdate", handleTimerUpdate);
 
     return () => {
       socket.off("moveMade", handleMove);
@@ -85,8 +111,11 @@ export default function TicTacToe() {
       socket.off("drawOffered", handleDrawOffered);
       socket.off("drawCanceled", handleDrawCanceled);
       socket.off("drawRefused", handleDrawRefused);
+      socket.off("waiting", handleWaiting);
+      socket.off("errorMessage", handleErrorMessage);
+      socket.off("timerUpdate", handleTimerUpdate);
     };
-  }, [socket, playerId, opponentName, match, user.username]);
+  }, [socket, playerId, opponentName, match, user]);
 
   const getMySymbol = () =>
     match?.playerSymbols?.find((p) => p.player === playerId)?.symbol || "";
@@ -99,8 +128,6 @@ export default function TicTacToe() {
   };
 
   const handleNewGame = () => {
-    if (!socket) return;
-
     setBoard(Array(9).fill(null));
     setTurn(null);
     setOpponentName("");
@@ -109,8 +136,15 @@ export default function TicTacToe() {
     setDrawOffered(false);
     setIncomingDrawOffer(null);
     setDrawRefusedMsg("");
+    setSearching(false);
+    setTimeLeft(0);
+  };
 
+  const handleFindMatch = () => {
+    if (!socket) return;
+    handleNewGame();
     socket.emit("requestMatch", { userId: playerId, game: "tictactoe" });
+    setSearching(true);
   };
 
   const handleOfferDraw = () => {
@@ -143,7 +177,15 @@ export default function TicTacToe() {
   return (
     <div className={styles.ticTacToe}>
       {!match ? (
-        <h3 className={styles.status}>⏳ Waiting for match...</h3>
+        <>
+          {!searching ? (
+            <button className={styles.button} onClick={handleFindMatch}>
+              🔍 Find Match
+            </button>
+          ) : (
+            <h3 className={styles.status}>⏳ Searching for opponent...</h3>
+          )}
+        </>
       ) : (
         <>
           <div className={styles.scoreBoard}>
@@ -176,11 +218,10 @@ export default function TicTacToe() {
           </div>
 
           <div className={styles.status}>
-            {turn === playerId && <p>➡️ Your turn</p>}
-            {turn && turn !== playerId && <p>⏳ {opponentName}'s turn</p>}
+            {turn && turn === playerId && <p>➡️ Your turn ⏱ {timeLeft}s</p>}
+            {turn && turn !== playerId && <p>⏳ {opponentName}'s turn ⏱ {timeLeft}s</p>}
             {!turn && gameResult && <p className={styles.statusResult}>{gameResult}</p>}
 
-            {/* Show Accept / Refuse Draw buttons if opponent offered */}
             {incomingDrawOffer && (
               <div>
                 <p className={styles.statusResult}>⚠️ {incomingDrawOffer} offered a draw</p>
@@ -193,7 +234,6 @@ export default function TicTacToe() {
               </div>
             )}
 
-            {/* Show your own draw offer */}
             {drawOffered && !incomingDrawOffer && (
               <div>
                 <p className={styles.statusResult}>⚠️ Draw offered</p>
@@ -203,7 +243,12 @@ export default function TicTacToe() {
               </div>
             )}
 
-            {/* Draw refused message */}
+            {errorMessage && (
+              <div>
+                <p className={styles.errorMessage}>{errorMessage}</p>
+              </div>
+            )}
+
             {drawRefusedMsg && <p className={styles.statusResult}>{drawRefusedMsg}</p>}
           </div>
 
@@ -212,7 +257,10 @@ export default function TicTacToe() {
               🤝 Offer Draw
             </button>
             <button className={styles.buttonReset} onClick={handleNewGame}>
-              🔄 New Game
+              🔄 Reset Board
+            </button>
+            <button className={styles.button} onClick={handleFindMatch}>
+              🔍 Find New Match
             </button>
           </div>
         </>

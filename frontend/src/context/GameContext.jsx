@@ -15,18 +15,13 @@ export const GameProvider = ({ children, user }) => {
 
     newSocket.on("connect", () => {
       console.log("✅ Connected to server:", newSocket.id);
-
-      // Register the user
+      // only register user
       newSocket.emit("register", { userId: user._id });
-
-      // Request matchmaking
-      newSocket.emit("requestMatch", { userId: user._id, game: "tictactoe" });
     });
 
     newSocket.on("matchFound", ({ match }) => {
       console.log("🎯 Match found:", match);
       setMatch(match);
-
       newSocket.emit("joinMatchRoom", { matchId: match._id, userId: user._id });
     });
 
@@ -42,8 +37,14 @@ export const GameProvider = ({ children, user }) => {
     socket.emit("makeMove", { matchId: match._id, userId: user._id, index });
   };
 
+  // ✅ Explicit matchmaking trigger
+  const requestMatch = (game = "tictactoe") => {
+    if (!socket) return;
+    socket.emit("requestMatch", { userId: user._id, game });
+  };
+
   return (
-    <GameContext.Provider value={{ socket, match, makeMove, playerId: user?._id }}>
+    <GameContext.Provider value={{ socket, match, setMatch, makeMove, playerId: user?._id, requestMatch }}>
       {children}
     </GameContext.Provider>
   );
