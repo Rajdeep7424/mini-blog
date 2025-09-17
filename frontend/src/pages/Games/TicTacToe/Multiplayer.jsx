@@ -243,20 +243,28 @@ export default function TicTacToe() {
         {turn && turn !== playerId && <p>⏳ Waiting for {opponentName}...</p>}
         {gameResult && <p className={styles.statusResult}>{gameResult}</p>}
 
-        {incomingDrawOffer && (
-          <div>
-            <p className={styles.statusResult}>⚠️ {incomingDrawOffer} offered a draw</p>
-            <button className={styles.button} onClick={acceptDraw}>🤝 Accept Draw</button>
-            <button className={styles.buttonCancel} onClick={refuseDraw}>❌ Refuse Draw</button>
-          </div>
-        )}
+        {searching && !match && (
+    <p className={styles.statusResult}>🔍 Finding an opponent...</p>
+  )}
 
-        {drawOffered && !incomingDrawOffer && (
-          <div>
-            <p className={styles.statusResult}>⚠️ Draw offered</p>
-            <button className={styles.buttonCancel} onClick={handleCancelDraw}>❌ Cancel Draw</button>
-          </div>
-        )}
+        <div>
+          {incomingDrawOffer && (
+            <>
+              <p className={styles.statusResult}>⚠️ {incomingDrawOffer} offered a draw</p>
+              <div className={styles.controls}>
+                <button className={styles.button} onClick={acceptDraw}>🤝 Accept Draw</button>
+                <button className={styles.buttonReset} onClick={refuseDraw}>❌ Refuse Draw</button>
+              </div>
+            </>
+          )}
+
+          {drawOffered && !incomingDrawOffer && (
+            <div className={styles.controls1}>
+              <p className={styles.statusResult}>⚠️ Draw offered</p>
+              <button className={styles.buttonReset} onClick={handleCancelDraw}>❌ Cancel Draw</button>
+            </div>
+          )}
+        </div>
 
         {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
         {drawRefusedMsg && <p className={styles.statusResult}>{drawRefusedMsg}</p>}

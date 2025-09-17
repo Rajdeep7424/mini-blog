@@ -4,19 +4,22 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 28px;
-  /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 74vh;
+  box-sizing: border-box;
 }
+
 .errorMessage {
   color: #ff4d4f;
   font-weight: bold;
-  margin: 10px 0;
+  margin: 0.8rem 0;
   text-align: center;
   background: rgba(255, 77, 79, 0.1);
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
   border: 1px solid #ff4d4f;
   animation: fadeIn 0.3s ease-in-out;
 }
@@ -28,43 +31,13 @@
 
 .title {
   font-size: 2.5rem;
-  margin-bottom: 1.5rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.gameModeSelector {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.modeButton, .modeActive {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.modeButton {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
-}
-
-.modeButton:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-}
-
-.modeActive {
-  background-color: white;
-  color: #764ba2;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-bottom: 2rem;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+  text-align: center;
 }
 
 .status {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   margin: 1rem 0;
   min-height: 2rem;
   font-weight: 600;
@@ -73,46 +46,34 @@
 
 .statusResult {
   color: #ffeb3b;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-.thinking {
-  display: inline-block;
-  animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
 }
 
 .gameBoard {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-gap: 10px;
+  grid-gap: 12px;
   margin: 1.5rem 0;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 15px;
-  border-radius: 15px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
 .cell {
   width: 90px;
   height: 90px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2.5rem;
   font-weight: bold;
-  color: white;
+  color: #fff;
   cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+  transition: all 0.25s ease;
 }
 
 .cell:hover:not(.disabled) {
@@ -126,37 +87,33 @@
 
 .cellContent {
   display: block;
-  animation: popIn 0.3s ease;
-}
-
-@keyframes popIn {
-  0% { transform: scale(0); }
-  80% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  animation: popIn 0.25s ease;
 }
 
 .cellX {
   color: #ff6b6b;
-  text-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
+  text-shadow: 0 0 6px rgba(255,107,107,0.6);
 }
 
 .cellO {
   color: #48dbfb;
-  text-shadow: 0 0 8px rgba(72, 219, 251, 0.5);
+  text-shadow: 0 0 6px rgba(72,219,251,0.6);
 }
 
 .cellWin {
-  background: rgba(255, 255, 255, 0.3);
-  animation: winPulse 2s infinite;
+  background: rgba(255,255,255,0.3);
+  animation: winPulse 1.8s infinite;
 }
 
 @keyframes winPulse {
-  0%, 100% { background-color: rgba(255, 255, 255, 0.3); }
-  50% { background-color: rgba(255, 215, 0, 0.5); }
+  0%, 100% { background-color: rgba(255,255,255,0.3); }
+  50% { background-color: rgba(255,215,0,0.5); }
 }
 
-.lastMove {
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+@keyframes popIn {
+  0% { transform: scale(0); opacity: 0; }
+  80% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .disabled {
@@ -168,52 +125,58 @@
   display: flex;
   justify-content: space-between;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   margin: 1.5rem 0;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 15px;
-  border-radius: 10px;
+  background: rgba(255,255,255,0.08);
+  padding: 1rem;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }
 
 .score {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+  padding: 0.5rem;
+  border-radius: 12px;
   transition: all 0.3s ease;
 }
 
 .activePlayer {
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  background: rgba(255,255,255,0.15);
+  box-shadow: 0 0 12px rgba(255,255,255,0.3);
 }
 
 .scoreLabel {
   font-size: 0.9rem;
-  margin-bottom: 0.3rem;
   opacity: 0.8;
 }
 
 .scoreValue {
   font-size: 1.8rem;
+  padding: .5rem;
   font-weight: bold;
 }
 
-.controls {
+.controls, .controls1 {
   display: flex;
-  gap: 1rem;
+  gap: 0.8rem;
   margin-top: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 360px;
 }
 
 .button, .buttonReset {
-  padding: 0.8rem 1.5rem;
+  padding: 0.7rem 1.4rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
+  text-align: center;
 }
 
 .button {
@@ -243,9 +206,9 @@
   }
   
   .cell {
-    width: 70px;
-    height: 70px;
-    font-size: 2rem;
+    width: 65px;
+    height: 65px;
+    font-size: 1.9rem;
   }
   
   .scoreBoard {
@@ -256,12 +219,10 @@
   .score {
     flex-direction: row;
     justify-content: space-between;
-  }
-  
-  .controls {
-    flex-direction: column;
     width: 100%;
-    max-width: 250px;
+  }
+  .scoreValue{
+    font-size: 1.2rem;
   }
   
   .button, .buttonReset {
