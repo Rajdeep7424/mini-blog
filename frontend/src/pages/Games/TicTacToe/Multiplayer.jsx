@@ -17,9 +17,16 @@ export default function TicTacToe() {
   const [drawRefusedMsg, setDrawRefusedMsg] = useState(""); 
   const [searching, setSearching] = useState(false); 
   const [errorMessage, setErrorMessage] = useState(""); 
-
   const [timeLeft, setTimeLeft] = useState(0);
   const [currentTimerPlayer, setCurrentTimerPlayer] = useState(null);
+
+  const isCellDisabled = (index) => {
+    if (board[index] !== null) return true;
+    if (!turn) return true;
+    if (turn !== playerId) return true;
+    if (currentTimerPlayer !== playerId) return false; // Can move if it's your timer
+    return false;
+  };
 
   // Initialize board & timer when match starts
   useEffect(() => {
@@ -46,11 +53,7 @@ export default function TicTacToe() {
   // Smooth frontend countdown
   useEffect(() => {
     if (timeLeft <= 0) return;
-
-    const interval = setInterval(() => {
-      setTimeLeft(prev => Math.max(prev - 1, 0));
-    }, 1000);
-
+    const interval = setInterval(() => setTimeLeft(prev => Math.max(prev - 1, 0)), 1000);
     return () => clearInterval(interval);
   }, [timeLeft]);
 
@@ -71,13 +74,16 @@ export default function TicTacToe() {
       setCurrentTimerPlayer(null);
       setTimeLeft(0);
 
-      if (match.result.winner === null) setGameResult("🤝 Draw!");
-      else if (match.result.winner === playerId) setGameResult("🎉 You win!");
-      else setGameResult(`💀 ${opponentName} wins!`);
+      if (match.result.status === "finished") {
+        if (match.result.reason === "draw") setGameResult("🤝 Draw!");
+        else if (match.result.winner === playerId) setGameResult("🎉 You win!");
+        else setGameResult(`💀 ${opponentName} wins!`);
+      }
 
       setDrawOffered(false);
       setIncomingDrawOffer(null);
       setDrawRefusedMsg("");
+      setSearching(false);
     };
 
     const handleDrawOffered = ({ from }) => {
@@ -110,6 +116,17 @@ export default function TicTacToe() {
       setCurrentTimerPlayer(currentPlayer);
     };
 
+    const handleMatchAbandoned = ({ message }) => {
+      setGameResult(message || "⚠️ Match abandoned");
+      setTurn(null);
+      setCurrentTimerPlayer(null);
+      setTimeLeft(0);
+      setDrawOffered(false);
+      setIncomingDrawOffer(null);
+      setDrawRefusedMsg("");
+      setSearching(false);
+    };
+
     socket.on("moveMade", handleMove);
     socket.on("gameFinished", handleGameFinished);
     socket.on("drawOffered", handleDrawOffered);
@@ -118,6 +135,7 @@ export default function TicTacToe() {
     socket.on("waiting", handleWaiting);
     socket.on("errorMessage", handleErrorMessage);
     socket.on("timerUpdate", handleTimerUpdate);
+    socket.on("matchAbandoned", handleMatchAbandoned);
 
     return () => {
       socket.off("moveMade", handleMove);
@@ -128,6 +146,7 @@ export default function TicTacToe() {
       socket.off("waiting", handleWaiting);
       socket.off("errorMessage", handleErrorMessage);
       socket.off("timerUpdate", handleTimerUpdate);
+      socket.off("matchAbandoned", handleMatchAbandoned);
     };
   }, [socket, playerId, opponentName, match, user]);
 
@@ -137,8 +156,7 @@ export default function TicTacToe() {
   const handleClick = (index) => {
     if (!match || board[index] !== null) return;
     if (!turn || turn !== playerId) return;
-    if (currentTimerPlayer !== playerId) return; // block click if timeout
-
+    if (currentTimerPlayer !== playerId) return;
     makeMove(index);
   };
 
@@ -192,71 +210,69 @@ export default function TicTacToe() {
 
   return (
     <div className={styles.ticTacToe}>
-      {!match ? (
-        <>
-          {!searching ? (
-            <button className={styles.button} onClick={handleFindMatch}>🔍 Find Match</button>
-          ) : (
-            <h3 className={styles.status}>⏳ Searching for opponent...</h3>
-          )}
-        </>
-      ) : (
-        <>
-          <div className={styles.scoreBoard}>
-            <div className={styles.score}>
-              <span className={styles.scoreLabel}>You ({getMySymbol()})</span>
-              <span className={styles.scoreValue}>{user.username}</span>
-            </div>
-            <div className={styles.score}>
-              <span className={styles.scoreLabel}>{opponentName} ({opponentSymbol})</span>
-              <span className={styles.scoreValue}>{opponentName}</span>
-            </div>
+      {match && (
+        <div className={styles.scoreBoard}>
+          <div className={styles.score}>
+            <span className={styles.scoreLabel}>You ({getMySymbol()})</span>
+            <span className={styles.scoreValue}>{user.username}</span>
           </div>
-
-          <div className={styles.gameBoard}>
-            {board.map((cell, i) => (
-              <button
-                key={i}
-                onClick={() => handleClick(i)}
-                className={`${styles.cell} ${cell === "X" ? styles.cellX : cell === "O" ? styles.cellO : ""}`}
-              >
-                <span className={styles.cellContent}>{cell}</span>
-              </button>
-            ))}
+          <div className={styles.score}>
+            <span className={styles.scoreLabel}>{opponentName} ({opponentSymbol})</span>
+            <span className={styles.scoreValue}>{opponentName}</span>
           </div>
+        </div>
+      )}
 
-<div className={styles.status}>
-  {turn && turn === playerId && <p>➡️ Your turn ⏱ {timeLeft}s</p>}
-  {turn && turn !== playerId && <p>⏳ Waiting for {opponentName}...</p>}
-  {!turn && gameResult && <p className={styles.statusResult}>{gameResult}</p>}
+      {match && (
+        <div className={styles.gameBoard}>
+          {board.map((cell, i) => (
+            <button
+              key={i}
+              onClick={() => handleClick(i)}
+              disabled={isCellDisabled(i)}
+              className={`${styles.cell} ${cell === "X" ? styles.cellX : cell === "O" ? styles.cellO : ""}`}
+            >
+              <span className={styles.cellContent}>{cell}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
-  {incomingDrawOffer && (
-    <div>
-      <p className={styles.statusResult}>⚠️ {incomingDrawOffer} offered a draw</p>
-      <button className={styles.button} onClick={acceptDraw}>🤝 Accept Draw</button>
-      <button className={styles.buttonCancel} onClick={refuseDraw}>❌ Refuse Draw</button>
-    </div>
-  )}
+      <div className={styles.status}>
+        {turn && turn === playerId && <p>➡️ Your turn ⏱ {timeLeft}s</p>}
+        {turn && turn !== playerId && <p>⏳ Waiting for {opponentName}...</p>}
+        {gameResult && <p className={styles.statusResult}>{gameResult}</p>}
 
-  {drawOffered && !incomingDrawOffer && (
-    <div>
-      <p className={styles.statusResult}>⚠️ Draw offered</p>
-      <button className={styles.buttonCancel} onClick={handleCancelDraw}>❌ Cancel Draw</button>
-    </div>
-  )}
+        {incomingDrawOffer && (
+          <div>
+            <p className={styles.statusResult}>⚠️ {incomingDrawOffer} offered a draw</p>
+            <button className={styles.button} onClick={acceptDraw}>🤝 Accept Draw</button>
+            <button className={styles.buttonCancel} onClick={refuseDraw}>❌ Refuse Draw</button>
+          </div>
+        )}
 
-  {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
-  {drawRefusedMsg && <p className={styles.statusResult}>{drawRefusedMsg}</p>}
-</div>
+        {drawOffered && !incomingDrawOffer && (
+          <div>
+            <p className={styles.statusResult}>⚠️ Draw offered</p>
+            <button className={styles.buttonCancel} onClick={handleCancelDraw}>❌ Cancel Draw</button>
+          </div>
+        )}
 
+        {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
+        {drawRefusedMsg && <p className={styles.statusResult}>{drawRefusedMsg}</p>}
+      </div>
 
-          <div className={styles.controls}>
+      <div className={styles.controls}>
+        {(gameResult || !match) && (
+          <button className={styles.button} onClick={handleFindMatch}>🔍 Find New Match</button>
+        )}
+        {match && !gameResult && (
+          <>
             <button className={styles.button} onClick={handleOfferDraw} disabled={drawOffered || incomingDrawOffer}>🤝 Offer Draw</button>
             <button className={styles.buttonReset} onClick={handleNewGame}>🔄 Reset Board</button>
-            <button className={styles.button} onClick={handleFindMatch}>🔍 Find New Match</button>
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
