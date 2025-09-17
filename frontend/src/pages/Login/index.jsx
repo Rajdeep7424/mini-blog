@@ -44,6 +44,7 @@ export default function Login() {
           value={formData.email}
           onChange={handleChange}
           required
+          autoFocus
         />
 
         <input
