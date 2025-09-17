@@ -6,6 +6,7 @@ const GameContext = createContext();
 export const GameProvider = ({ children, user }) => {
   const [socket, setSocket] = useState(null);
   const [match, setMatch] = useState(null);
+  const [gameResult, setGameResult] = useState(""); // ✅ shared game result
 
   useEffect(() => {
     if (!user?._id) return;
@@ -22,6 +23,7 @@ export const GameProvider = ({ children, user }) => {
     newSocket.on("matchFound", ({ match }) => {
       console.log("🎯 Match found:", match);
       setMatch(match);
+      setGameResult(""); // reset when new match starts ✅
       newSocket.emit("joinMatchRoom", { matchId: match._id, userId: user._id });
     });
 
@@ -44,7 +46,18 @@ export const GameProvider = ({ children, user }) => {
   };
 
   return (
-    <GameContext.Provider value={{ socket, match, setMatch, makeMove, playerId: user?._id, requestMatch }}>
+    <GameContext.Provider
+      value={{
+        socket,
+        match,
+        setMatch,
+        makeMove,
+        playerId: user?._id,
+        requestMatch,
+        gameResult,       // ✅ provide to consumers
+        setGameResult,    // ✅ allow TicTacToe to update
+      }}
+    >
       {children}
     </GameContext.Provider>
   );

@@ -4,14 +4,13 @@ import { useAuth } from "../../../context/AuthContext";
 import styles from "./TicTacToe.module.css";
 
 export default function TicTacToe() {
-  const { socket, match, makeMove, playerId } = useGame();
+  const { socket, match, makeMove, playerId, gameResult, setGameResult } = useGame(); // ✅ use from context
   const { user } = useAuth();
 
   const [board, setBoard] = useState(Array(9).fill(null));
   const [turn, setTurn] = useState(null);
   const [opponentName, setOpponentName] = useState("");
   const [opponentSymbol, setOpponentSymbol] = useState("");
-  const [gameResult, setGameResult] = useState("");
   const [drawOffered, setDrawOffered] = useState(false); 
   const [incomingDrawOffer, setIncomingDrawOffer] = useState(null); 
   const [drawRefusedMsg, setDrawRefusedMsg] = useState(""); 
@@ -24,7 +23,7 @@ export default function TicTacToe() {
     if (board[index] !== null) return true;
     if (!turn) return true;
     if (turn !== playerId) return true;
-    if (currentTimerPlayer !== playerId) return false; // Can move if it's your timer
+    if (currentTimerPlayer !== playerId) return true;
     return false;
   };
 
@@ -40,7 +39,7 @@ export default function TicTacToe() {
 
     setOpponentName(oppObj?.username || "Opponent");
     setOpponentSymbol(oppObj?.symbol || "");
-    setGameResult("");
+    setGameResult(""); // ✅ reset shared result
     setDrawOffered(false);
     setIncomingDrawOffer(null);
     setDrawRefusedMsg("");
@@ -48,7 +47,7 @@ export default function TicTacToe() {
 
     setCurrentTimerPlayer(match.gameState.turn);
     setTimeLeft(30); // default 30s per move
-  }, [match, playerId]);
+  }, [match, playerId, setGameResult]);
 
   // Smooth frontend countdown
   useEffect(() => {
@@ -148,7 +147,7 @@ export default function TicTacToe() {
       socket.off("timerUpdate", handleTimerUpdate);
       socket.off("matchAbandoned", handleMatchAbandoned);
     };
-  }, [socket, playerId, opponentName, match, user]);
+  }, [socket, playerId, opponentName, match, user, setGameResult]);
 
   const getMySymbol = () =>
     match?.playerSymbols?.find((p) => p.player === playerId)?.symbol || "";
@@ -165,7 +164,7 @@ export default function TicTacToe() {
     setTurn(null);
     setOpponentName("");
     setOpponentSymbol("");
-    setGameResult("");
+    setGameResult(""); // ✅ reset shared result
     setDrawOffered(false);
     setIncomingDrawOffer(null);
     setDrawRefusedMsg("");
@@ -197,7 +196,7 @@ export default function TicTacToe() {
   const acceptDraw = () => {
     if (!socket || !match) return;
     socket.emit("acceptDraw", { matchId: match._id });
-    setGameResult("🤝 Draw!");
+    setGameResult("🤝 Draw!"); // ✅ shared result
     setIncomingDrawOffer(null);
     setDrawOffered(false);
   };
@@ -244,8 +243,8 @@ export default function TicTacToe() {
         {gameResult && <p className={styles.statusResult}>{gameResult}</p>}
 
         {searching && !match && (
-    <p className={styles.statusResult}>🔍 Finding an opponent...</p>
-  )}
+          <p className={styles.statusResult}>🔍 Finding an opponent...</p>
+        )}
 
         <div>
           {incomingDrawOffer && (
