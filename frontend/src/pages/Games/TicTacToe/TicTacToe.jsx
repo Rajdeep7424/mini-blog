@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import styles from "./TicTacToe.module.css";
+import { NavLink } from "react-router-dom";
 
 /* ---------- Pure helpers (outside component) ---------- */
 const WINNING_CONDITIONS = [
@@ -206,10 +207,11 @@ const resetScores = useCallback(() => {
 }, [restartGame, gameMode]);
 
 
-  const changeGameMode = useCallback((mode) => {
-    setGameMode(mode);
-    restartGame();
-  }, [restartGame]);
+const changeGameMode = useCallback((mode) => {
+  setGameMode(mode);
+  restartGame();
+}, [restartGame]);
+
 
   const getCellClassName = useCallback((index) => {
     const value = gameBoard[index];
@@ -227,22 +229,31 @@ const resetScores = useCallback(() => {
       <h1 className={styles.title}>Tic Tac Toe</h1>
 
       {/* Mode */}
-      <div className={styles.gameModeSelector}>
-        <button
-          type="button"
-          className={gameMode === "2player" ? styles.modeActive : styles.modeButton}
-          onClick={() => changeGameMode("2player")}
-        >
-          2 Players
-        </button>
-        <button
-          type="button"
-          className={gameMode === "vsComputer" ? styles.modeActive : styles.modeButton}
-          onClick={() => changeGameMode("vsComputer")}
-        >
-          VS Computer
-        </button>
-      </div>
+<div className={styles.gameModeSelector}>
+  <button
+    type="button"
+    className={`${styles.modeButton} ${gameMode === "2player" ? styles.modeActive : ""}`}
+    onClick={() => changeGameMode("2player")}
+  >
+    2 Players
+  </button>
+  <button
+    type="button"
+    className={`${styles.modeButton} ${gameMode === "vsComputer" ? styles.modeActive : ""}`}
+    onClick={() => changeGameMode("vsComputer")}
+  >
+    VS Computer
+  </button>
+  <NavLink
+    to="/tictactoe-multiplayer"
+    className={`${styles.modeButton} ${gameMode === "multiplayer" ? styles.modeActive : ""}`}
+    onClick={() => setGameMode("multiplayer")}
+  >
+    Multiplayer
+  </NavLink>
+</div>
+
+
 
       {/* Status */}
       <div className={`${styles.status} ${!gameActive ? styles.statusResult : ""}`}>

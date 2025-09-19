@@ -1,0 +1,127 @@
+/* Tic Tac Toe Multiplayer - unified theme */
+.ticTacToe {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.gameBoard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 1.5rem 0;
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.3), 0 0 10px rgba(0,195,255,0.1) inset;
+}
+.gameBoard.activeTurn {
+  box-shadow: 0 15px 30px rgba(0,0,0,0.3), 0 0 20px #00c3ff inset;
+  transition: all 0.3s ease;
+}
+
+.cell {
+  width: 90px;
+  height: 90px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.cellX { color: #ff6b6b; text-shadow: 0 0 6px rgba(255,107,107,0.6); }
+.cellO { color: #48dbfb; text-shadow: 0 0 6px rgba(72,219,251,0.6); }
+.cellContent { display: block; animation: popIn 0.25s ease; }
+
+.disabled { cursor: not-allowed; opacity: 0.7; }
+
+@keyframes popIn {
+  0% { transform: scale(0); opacity: 0; }
+  80% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Active player glow */
+.activePlayer {
+  background: rgba(255,255,255,0.15);
+  box-shadow: 0 0 12px rgba(255,255,255,0.3), 0 0 10px #00c3ff inset;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+
+.scoreBoard {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 420px;
+  margin: 1.5rem 0;
+  background: rgba(255,255,255,0.08);
+  padding: 1rem;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+.score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 12px;
+}
+
+.status { font-size: 1.3rem; margin: 1rem 0; min-height: 2rem; font-weight: 600; text-align: center; }
+.statusResult { color: #ffeb3b; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
+.errorMessage { color: #ff4d4f; font-weight: bold; margin: 0.8rem 0; text-align: center; background: rgba(255,77,79,0.1); padding: 0.5rem 1rem; border-radius: 10px; border: 1px solid #ff4d4f; animation: fadeIn 0.3s ease-in-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+.controls, .controls1 { display: flex; gap: 0.8rem; margin-top: 1rem; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 360px; }
+
+.button, .buttonReset {
+  padding: 0.7rem 1.4rem; border: none; border-radius: 10px;
+  font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.25s ease; text-align: center;
+}
+
+.button { background-color: #00b894; color: white; }
+.button:hover { background-color: #00d8a7; transform: translateY(-2px); }
+
+.buttonReset { background-color: #fd79a8; color: white; }
+.buttonReset:hover { background-color: #ff92bc; transform: translateY(-2px); }
+
+/* Find Match Card */
+.findMatchCard {
+  background: linear-gradient(145deg, #1e1e2f, #2c2c3f);
+  border-radius: 16px;
+  padding: 2rem 3rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 10px rgba(0, 195, 255, 0.3) inset;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  animation: fadeIn 0.5s ease-in-out; margin: 2rem 0;
+}
+
+.findMatchContent { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.findMatchText { color: #00c3ff; font-size: 1.4rem; font-weight: 600; text-shadow: 0 0 6px rgba(0,195,255,0.6); text-align: center; }
+.findMatchButton { background: #00b894; color: #fff; padding: 0.8rem 1.6rem; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.25s ease; box-shadow: 0 4px 12px rgba(0,184,148,0.5); }
+.findMatchButton:hover { background: #00d8a7; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,216,167,0.6); }
+
+/* Loader */
+.loader { width: 40px; height: 40px; border: 4px solid #00c3ff; border-top: 4px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .cell { width: 65px; height: 65px; font-size: 1.9rem; }
+  .scoreBoard { flex-direction: column; gap: 0.5rem; }
+  .score { flex-direction: row; justify-content: space-between; width: 100%; }
+  .button, .buttonReset, .findMatchButton { width: 100%; }
+  .findMatchText { font-size: 1.2rem; }
+}

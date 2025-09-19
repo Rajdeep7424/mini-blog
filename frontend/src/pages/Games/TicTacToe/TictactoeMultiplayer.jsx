@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useGame } from "../../../context/GameContext";
 import { useAuth } from "../../../context/AuthContext"; 
-import styles from "./TicTacToe.module.css";
+import styles from "./TicTacToeMultiplayer.module.css";
 
-export default function TicTacToe() {
+export default function TictactoeMultiplayer() {
   const { socket, match, makeMove, playerId, gameResult, setGameResult } = useGame(); // ✅ use from context
   const { user } = useAuth();
 
@@ -211,19 +211,22 @@ export default function TicTacToe() {
     <div className={styles.ticTacToe}>
       {match && (
         <div className={styles.scoreBoard}>
-          <div className={styles.score}>
-            <span className={styles.scoreLabel}>You ({getMySymbol()})</span>
-            <span className={styles.scoreValue}>{user.username}</span>
-          </div>
-          <div className={styles.score}>
-            <span className={styles.scoreLabel}>{opponentName} ({opponentSymbol})</span>
-            <span className={styles.scoreValue}>{opponentName}</span>
-          </div>
+          
+          <div className={`${styles.score} ${turn === playerId && !gameResult ? styles.activePlayer : ''}`}>
+  <span className={styles.scoreLabel}>You ( {getMySymbol()} )</span>
+  <span className={styles.scoreValue}>{user.username}</span>
+</div>
+
+<div className={`${styles.score} ${turn !== playerId && !gameResult ? styles.activePlayer : ''}`}>
+  <span className={styles.scoreLabel}>Opponent ( {opponentSymbol} )</span>
+  <span className={styles.scoreValue}>{opponentName}</span>
+</div>
+
         </div>
       )}
 
       {match && (
-        <div className={styles.gameBoard}>
+        <div className={`${styles.gameBoard} ${turn === playerId ? styles.activeTurn : ''}`}>
           {board.map((cell, i) => (
             <button
               key={i}
@@ -243,8 +246,14 @@ export default function TicTacToe() {
         {gameResult && <p className={styles.statusResult}>{gameResult}</p>}
 
         {searching && !match && (
-          <p className={styles.statusResult}>🔍 Finding an opponent...</p>
-        )}
+  <div className={styles.findMatchCard}>
+    <div className={styles.findMatchContent}>
+      <p className={styles.findMatchText}>🔍 Searching for an opponent...</p>
+      <div className={styles.loader}></div>
+    </div>
+  </div>
+)}
+
 
         <div>
           {incomingDrawOffer && (
@@ -270,9 +279,18 @@ export default function TicTacToe() {
       </div>
 
       <div className={styles.controls}>
-        {(gameResult || !match) && (
-          <button className={styles.button} onClick={handleFindMatch}>🔍 Find New Match</button>
-        )}
+        {(gameResult || (!match && !searching)) && (
+  <div className={styles.findMatchCard}>
+    <div className={styles.findMatchContent}>
+      <p className={styles.findMatchText}>🎮 Ready for a new match?</p>
+      <button className={styles.findMatchButton} onClick={handleFindMatch}>
+        🔍 Find New Match
+      </button>
+    </div>
+  </div>
+)}
+
+
         {match && !gameResult && (
           <>
             <button className={styles.button} onClick={handleOfferDraw} disabled={drawOffered || incomingDrawOffer}>🤝 Offer Draw</button>

@@ -9,18 +9,19 @@
 
 .navButton, .pageButton {
   padding: 0.5rem 0.75rem;
-  border: 1px solid #e2e8f0;
-  background: white;
+  border: 1px solid #333;
+  background: #1e1e2f;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.9rem;
   font-weight: 500;
   min-width: 2.5rem;
-  color: black;
+  color: #00c3ff;
   display: flex;
   align-items: center;
   justify-content: center;
+  text-shadow: 0 0 2px #00c3ff;
 }
 
 .navButton {
@@ -29,9 +30,10 @@
 
 .navButton:hover:not(:disabled),
 .pageButton:hover:not(.active) {
-  background: #f7fafc;
-  border-color: #cbd5e0;
+  background: #2c2c3f;
+  border-color: #00c3ff;
   transform: translateY(-1px);
+  box-shadow: 0 0 6px rgba(0,195,255,0.5);
 }
 
 .navButton:disabled,
@@ -42,16 +44,16 @@
 }
 
 .pageButton.active {
-  background: #3182ce;
-  color: white;
-  border-color: #3182ce;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: #00c3ff;
+  color: #1e1e2f;
+  border-color: #00c3ff;
+  box-shadow: 0 0 8px rgba(0,195,255,0.8);
 }
 
 .pageInfo {
   margin-left: 1rem;
   font-size: 0.9rem;
-  color: #718096;
+  color: #b0b0b0;
   font-weight: 500;
 }
 

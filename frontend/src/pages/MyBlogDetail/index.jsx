@@ -11,10 +11,7 @@ export default function MyBlogDetails() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState({
-    title: "",
-    content: ""
-  });
+  const [editForm, setEditForm] = useState({ title: "", content: "" });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,10 +22,7 @@ export default function MyBlogDetails() {
     try {
       const response = await getBlog(id);
       setBlog(response.data);
-      setEditForm({
-        title: response.data.title,
-        content: response.data.content
-      });
+      setEditForm({ title: response.data.title, content: response.data.content });
     } catch (error) {
       console.error("Error fetching blog details:", error);
       setMessage("Failed to load blog");
@@ -66,24 +60,15 @@ export default function MyBlogDetails() {
     }
   };
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
+  const handleEdit = () => setIsEditing(true);
   const handleCancelEdit = () => {
     setIsEditing(false);
-    setEditForm({
-      title: blog.title,
-      content: blog.content
-    });
+    setEditForm({ title: blog.title, content: blog.content });
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditForm(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setEditForm(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSaveEdit = async () => {
@@ -110,13 +95,8 @@ export default function MyBlogDetails() {
 
   return (
     <div className={styles.blogcontainer}>
-      <Message 
-        message={message} 
-        type={messageType} 
-        onClose={clearMessage}
-        duration={5000}
-      />
-      
+      <Message message={message} type={messageType} onClose={clearMessage} duration={5000} />
+
       <button className={styles.backbtn} onClick={() => navigate(-1)}>
         ⬅ Back
       </button>
@@ -140,48 +120,31 @@ export default function MyBlogDetails() {
                 rows="15"
               />
             </div>
-            
             <div className={styles.editActions}>
-              <button onClick={handleSaveEdit} className={styles.saveBtn}>
-                Save Changes
-              </button>
-              <button onClick={handleCancelEdit} className={styles.cancelBtn}>
-                Cancel
-              </button>
+              <button onClick={handleSaveEdit} className={styles.saveBtn}>Save Changes</button>
+              <button onClick={handleCancelEdit} className={styles.cancelBtn}>Cancel</button>
             </div>
           </>
         ) : (
           <>
-            <h2>{blog.title}</h2>
+            <h2 className={styles.blogtitle}>{blog.title}</h2>
             <p className={styles.blogmeta}>
-              ✍️ Author: {blog.author?.username || "Unknown"} | 📅{" "}
-              {new Date(blog.createdAt).toLocaleDateString()}
+              ✍️ Author: {blog.author?.username || "Unknown"} | 📅 {new Date(blog.createdAt).toLocaleDateString()}
             </p>
-            <p
-              className={`${styles.blogstatus} ${
-                blog.isPublished ? styles.published : styles.draft
-              }`}
-            >
+            <p className={`${styles.blogstatus} ${blog.isPublished ? styles.published : styles.draft}`}>
               📌 Status: {blog.isPublished ? "Published" : "Draft"}
             </p>
-
-            <div className={styles.blogcontent}>
-              {blog.content}
-            </div>
+            <div className={styles.blogcontent}>{blog.content}</div>
 
             <div className={styles.actions}>
-              <button 
+              <button
                 onClick={handleToggleStatus}
                 className={blog.isPublished ? styles.unpublishBtn : styles.publishBtn}
               >
                 {blog.isPublished ? "Unpublish" : "Publish"}
               </button>
-              <button onClick={handleEdit} className={styles.editBtn}>
-                Edit
-              </button>
-              <button onClick={handleDelete} className={styles.deletebtn}>
-                Delete
-              </button>
+              <button onClick={handleEdit} className={styles.editBtn}>Edit</button>
+              <button onClick={handleDelete} className={styles.deleteBtn}>Delete</button>
             </div>
           </>
         )}

@@ -19,7 +19,8 @@ import ForgotPassword from './pages/auth/ForgetPassword'
 import ResetPassword from './pages/auth/ResetPassword'
 import Games from './pages/Games/Games'
 import TicTacToe from './pages/Games/TicTacToe/TicTacToe'
-import Multiplayer from './pages/Games/TicTacToe/Multiplayer'
+import TictactoeMultiplayer from './pages/Games/TicTacToe/TictactoeMultiplayer'
+import CarRace from './pages/Games/CarRace/CarRace'
 
 function AppWrapper() {
   const { match, gameResult } = useGame(); // get gameResult too
@@ -35,7 +36,8 @@ function AppWrapper() {
         <Route path='/login' element={<Login />} />
         <Route path='/games' element={<Games />} />
         <Route path='/tictactoe' element={<TicTacToe />} />
-        <Route path='/multiplayer' element={<Multiplayer />} />
+        <Route path='/carrace' element={<CarRace />} />
+        <Route path='/tictactoe-multiplayer' element={<TictactoeMultiplayer />} />
         <Route path='/bloglist' element={<Bloglist />} />
         <Route path='/myblogs' element={<MyBlogList />} />
         <Route path='/myblogs/:id' element={<MyBlogDetails />} />

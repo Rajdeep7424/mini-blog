@@ -11,11 +11,11 @@ export default function BlogDetails() {
 
   useEffect(() => {
     fetchBlog();
-  }, [id]); // ✅ depend on id
+  }, [id]);
 
   const fetchBlog = async () => {
     try {
-      const response = await getPublicBlog(id); // ✅ correct service
+      const response = await getPublicBlog(id);
       setBlog(response.data);
     } catch (error) {
       console.error("Error fetching blog details:", error);
@@ -24,8 +24,8 @@ export default function BlogDetails() {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (!blog) return <p>Blog not found.</p>;
+  if (loading) return <p className={styles.loading}>Loading...</p>;
+  if (!blog) return <p className={styles.loading}>Blog not found.</p>;
 
   return (
     <div className={styles.blogcontainer}>
@@ -33,12 +33,14 @@ export default function BlogDetails() {
         ⬅ Back
       </button>
       <div className={styles.blogcard}>
-        <h2>{blog.title}</h2>
+        <h2 className={styles.blogtitle}>{blog.title}</h2>
         <p className={styles.blogmeta}>
           ✍️ Author: {blog.author?.username || "Unknown"} | 📅{" "}
           {new Date(blog.createdAt).toLocaleDateString()}
         </p>
-        <p className={styles.blogcontent}>{blog.content}</p>
+        <p className={styles.blogcontent}>
+          {blog.content}
+        </p>
       </div>
     </div>
   );
