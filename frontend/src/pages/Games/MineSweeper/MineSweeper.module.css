@@ -6,16 +6,18 @@
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #fff;
+  /* background: #1a1a2e; darker background for contrast */
+  /* min-height: 100vh; */
 }
 
 /* Board styling */
 .board {
   display: inline-block;
   margin: 20px;
-  background: #1e1e2f;
-  padding: 10px;
-  border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+  /* background: #23233f; */
+  padding: 12px;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7), inset 0 0 8px rgba(0,0,0,0.2);
 }
 
 /* Row */
@@ -25,39 +27,41 @@
 
 /* Cell styling */
 .cell {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border: 2px solid #555;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(145deg, #d9d9d9, #f0f0f0);
+  /* background: linear-gradient(145deg, #2c2c3f, #1e1e2f); */
   cursor: pointer;
   font-weight: bold;
-  font-size: 1.3rem;
-  color: #333;
-  transition: all 0.15s ease;
+  font-size: 1.4rem;
+  color: #eee;
+  transition: all 0.2s ease;
   user-select: none;
-  border-radius: 5px;
+  border-radius: 6px;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.4);
 }
 
 .cell:hover {
-  transform: scale(1.08);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 255, 255, 0.6), inset 0 0 5px rgba(0,255,255,0.3);
 }
 
 /* Revealed cell */
 .cell.revealed {
-  background: linear-gradient(145deg, #eee, #ddd);
+  background: linear-gradient(145deg, #1f1f2e, #2e2e44);
   cursor: default;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.25);
-  color: #444;
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
+  color: #00fff7; /* neon accent for numbers/safe */
 }
 
 /* Mines */
 .cell.isMine {
   color: #ff4d4f;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
+  text-shadow: 0 0 4px #ff4d4f, 0 0 10px #ff1a1a;
 }
 
 /* Flagged cells */
@@ -65,51 +69,74 @@
   background: #ffd700;
   color: #333;
   font-weight: bold;
+  text-shadow: 0 0 4px #ffd700;
+}
+
+/* Safe cell (diamond icon) */
+.cell.safe {
+  color: #00fff7;
+  font-size: 1.3rem;
+  text-shadow: 0 0 6px #00fff7;
 }
 
 /* Start button */
 .startBtn {
-  padding: 10px 20px;
+  padding: 10px 24px;
   margin-bottom: 15px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   background: linear-gradient(135deg, #00c3ff, #33ffff);
   color: #000;
   font-weight: bold;
   cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.2s ease;
+  font-size: 1.1rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0,195,255,0.5);
 }
 
 .startBtn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 14px rgba(0, 195, 255, 0.6);
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(0, 255, 255, 0.7), inset 0 0 8px rgba(0,255,255,0.3);
 }
 
 /* Message */
 .message {
-  margin: 10px 0;
+  margin: 12px 0;
   font-weight: bold;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: #ffd700;
   text-align: center;
+  text-shadow: 0 0 4px #ffd700, 0 0 10px #ffa500;
 }
 
-/* Optional: Diamond icon for safe cells */
-.cell.safe {
+/* Scoreboard */
+.scoreboard {
+  display: flex;
+  justify-content: space-around;
+  width: 260px;
+  margin: 12px 0 22px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #2c2c44;
+  font-size: 1.05rem;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset 0 0 6px rgba(0,255,255,0.2);
   color: #00fff7;
-  font-size: 1.3rem;
 }
 
 /* Optional: responsive board */
 @media (max-width: 500px) {
   .cell {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     font-size: 1rem;
   }
   .startBtn {
-    padding: 8px 16px;
-    font-size: 0.9rem;
+    padding: 8px 18px;
+    font-size: 1rem;
+  }
+  .scoreboard {
+    width: 220px;
+    font-size: 0.95rem;
   }
 }

@@ -254,3 +254,33 @@ export const flagCell = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Update best score
+export const updateBestScore = async (req, res) => {
+  try {
+    const { userId, game, score } = req.body;
+
+    if (!userId || !game || typeof score !== "number") {
+      return res.status(400).json({ error: "Invalid input" });
+    }
+
+    // $max ensures we only update if new score is higher
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $max: { [`games.${game}`]: score } }, // e.g. games.minesweeper
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({
+      message: "Score updated successfully",
+      bestScores: updatedUser.games
+    });
+  } catch (err) {
+    console.error("Error updating best score:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};

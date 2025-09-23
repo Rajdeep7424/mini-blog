@@ -45,6 +45,10 @@ const userSchema = mongoose.Schema(
       ref: 'Match',
       default: null,
     },
+    games: {
+      carrace:{type: Number,required: true,default:0},
+      minesweeper:{type: Number,required: true,default:0},
+    }
   },
   {
     timestamps: true,
