@@ -171,6 +171,7 @@ export default function Minesweeper() {
 
 
       {message && <div className={styles.message}>{message}</div>}
+  <div className={styles.masterBoard}>
 
       <div className={styles.board}>
         {board.length > 0 ? (
@@ -209,6 +210,7 @@ export default function Minesweeper() {
         ) : (
           <div>No scores yet</div>
         )}
+      </div>
       </div>
       
     </div>

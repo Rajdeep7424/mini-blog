@@ -39,12 +39,34 @@
   color: #00c3ff;
   text-shadow: 0 0 6px #00c3ff;
 }
-
 .blog p {
   font-size: 1rem;
   line-height: 1.6;
   color: #ccc;
+  white-space: normal;
+
+  display: -webkit-box;       /* for line-clamp */
+  -webkit-line-clamp: 2;      /* show only 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  position: relative;
+  padding-right: 3rem;  
+  white-space: pre-wrap;      /* space for Read more */
 }
+
+/* add Read more at end of second line */
+.blog p::after {
+  content: ' Read more...';
+  color: #00c3ff;
+  font-weight: bold;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to right, transparent, #2c2c3f 50%);
+  padding-left: 0.3rem;
+  pointer-events: none; /* prevents interfering with click */
+}
+
 
 /* Author info (optional) */
 .author {

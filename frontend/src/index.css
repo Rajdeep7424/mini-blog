@@ -7,7 +7,8 @@
   color: rgba(255, 255, 255, 0.87);
 
   /* Dark neon gradient background */
-  background: linear-gradient(135deg, #2b223c 0%, #3b1270 100%);
+  background: linear-gradient(135deg, #374d60 0%, #6c21b3 100%);
+  /* background: linear-gradient(135deg, #2b223c 0%, #3b1270 100%); */
 
   
   font-synthesis: none;

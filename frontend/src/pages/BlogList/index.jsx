@@ -54,7 +54,7 @@ const BlogList = () => {
           onClick={() => navigate(`/blogs/${blog._id}`)} // ✅ navigate to details
         >
           <h3>{blog.title}</h3>
-          <p>{blog.content.substring(0, 100)}...</p> {/* show only preview */}
+          <p>{blog.content.substring(0, 100)} </p> {/* show only preview */}
         </div>
       ))}
 
