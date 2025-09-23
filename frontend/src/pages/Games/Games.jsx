@@ -12,6 +12,7 @@ export default function Games(){
     const games = [
         { name: "TicTacToe", link: "/tictactoe", theme: styles.tictactoe },
         { name: "Car Race", link: "/carrace", theme: styles.carrace },
+        { name: "Mine Sweeper", link: "/minesweeper", theme: styles.minesweeper },
     ];
 
     return(

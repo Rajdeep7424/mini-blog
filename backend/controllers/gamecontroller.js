@@ -2,6 +2,8 @@
 import Matchmaking from '../models/matchmaking.js';
 import Match from '../models/Match.js';
 import User from '../models/User.js';
+import Minesweeper from '../models/minesweeper.js';
+
 
 // helper: check winning combos for tic-tac-toe
 const WINNING = [
@@ -135,5 +137,120 @@ export const makeMove = async (req, res) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Server error' });
+  }
+};
+// controllers/gamecontroller.js
+
+// Generate a new board
+function generateBoard(rows, cols, mines) {
+  const board = Array.from({ length: rows }, (_, r) =>
+    Array.from({ length: cols }, (_, c) => ({
+      row: r,
+      col: c,
+      isMine: false,
+      isRevealed: false,
+      isFlagged: false,
+      neighborMines: 0,
+    }))
+  );
+
+  let placed = 0;
+  while (placed < mines) {
+    const r = Math.floor(Math.random() * rows);
+    const c = Math.floor(Math.random() * cols);
+    if (!board[r][c].isMine) {
+      board[r][c].isMine = true;
+      placed++;
+    }
+  }
+
+  // Count neighbor mines
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (board[r][c].isMine) continue;
+      let count = 0;
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          if (r + dr >= 0 && r + dr < rows && c + dc >= 0 && c + dc < cols) {
+            if (board[r + dr][c + dc].isMine) count++;
+          }
+        }
+      }
+      board[r][c].neighborMines = count;
+    }
+  }
+
+  return board;
+}
+
+// Start new game
+export const startMinesweeper = async (req, res) => {
+  console.log("REQ BODY:", req.body);
+  try {
+    const { rows = 9, cols = 9, mines = 10, user } = req.body;
+
+    const board = generateBoard(rows, cols, mines);
+
+    const newGame = await Minesweeper.create({
+      user: user || null,
+      rows,
+      cols,
+      mines,
+      board,
+      status: "ongoing",
+    });
+
+    res.status(201).json(newGame);
+  } catch (err) {
+    console.error("Start Minesweeper error:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Reveal cell
+export const revealCell = async (req, res) => {
+  try {
+    const { gameId, row, col } = req.body;
+    const game = await Minesweeper.findById(gameId);
+    if (!game) return res.status(404).json({ error: "Game not found" });
+
+    const cell = game.board[row][col];
+    if (cell.isRevealed || cell.isFlagged) return res.status(400).json({ error: "Cell already revealed or flagged" });
+
+    cell.isRevealed = true;
+
+    if (cell.isMine) game.status = "lost";
+    else {
+      // Optional: auto-reveal neighbors if neighborMines === 0
+    }
+
+    // Check win condition
+    if (game.board.flat().every(c => c.isRevealed || c.isMine)) game.status = "won";
+
+    await game.save();
+    res.json(game);
+  } catch (err) {
+    console.error("Reveal cell error:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Flag cell
+export const flagCell = async (req, res) => {
+  try {
+    const { gameId, row, col } = req.body;
+    const game = await Minesweeper.findById(gameId);
+    if (!game) return res.status(404).json({ error: "Game not found" });
+
+    const cell = game.board[row][col];
+    if (cell.isRevealed) return res.status(400).json({ error: "Cannot flag revealed cell" });
+
+    cell.isFlagged = !cell.isFlagged;
+
+    await game.save();
+    res.json(game);
+  } catch (err) {
+    console.error("Flag cell error:", err);
+    res.status(500).json({ error: err.message });
   }
 };

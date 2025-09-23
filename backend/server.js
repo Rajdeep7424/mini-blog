@@ -57,3 +57,7 @@ gameSocket(io);
 server.listen(PORT, () => console.log(`Server listening on ${PORT}`));
 
 startServer();
+
+import gameRoutes from "./routes/gameRoutes.js";
+
+app.use("/api/games", gameRoutes);
