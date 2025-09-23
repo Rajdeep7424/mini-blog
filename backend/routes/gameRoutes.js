@@ -31,4 +31,24 @@ router.get("/best/:userId/:game", async (req, res) => {
   }
 });
 
+router.get("/leaderboard/:game", async (req, res) => {
+  const { game } = req.params;
+  try {
+    const users = await User.find({ [`games.${game}`]: { $exists: true } })
+      .sort({ [`games.${game}`]: -1 })
+      .limit(5)
+      .select("username games");
+
+    const leaderboard = users.map(u => ({
+      username: u.username,
+      score: u.games[game]
+    }));
+
+    res.json(leaderboard);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 export default router;

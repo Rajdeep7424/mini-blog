@@ -14,6 +14,19 @@ export default function Minesweeper() {
   // Scores
   const [currentScore, setCurrentScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
+  const [leaderboard, setLeaderboard] = useState([]);
+
+
+  useEffect(() => {
+    fetch(`${BACKEND_BASE}/leaderboard/minesweeper`)
+      .then(res => res.json())
+      .then(data => {
+        console.log(data); // <--- check what is received
+        setLeaderboard(data);
+      })
+      .catch(err => console.error(err));
+  }, []);
+  
 
   // 🔹 Fetch best score on mount
   useEffect(() => {
@@ -185,6 +198,19 @@ export default function Minesweeper() {
           <p>Click "Start Game" to begin!</p>
         )}
       </div>
+      <div className={styles.leaderboard}>
+        <h3>🏆 Leaderboard</h3>
+        {leaderboard.length > 0 ? (
+          leaderboard.map((entry, idx) => (
+            <div key={idx}>
+              {idx + 1}. {entry.username} — {entry.score}
+            </div>
+          ))
+        ) : (
+          <div>No scores yet</div>
+        )}
+      </div>
+      
     </div>
   );
 }
