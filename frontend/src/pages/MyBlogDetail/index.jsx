@@ -11,7 +11,7 @@ export default function MyBlogDetails() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState({ title: "", content: "" });
+  const [editForm, setEditForm] = useState({ title: "", content: "", tags: "" });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,7 +22,11 @@ export default function MyBlogDetails() {
     try {
       const response = await getBlog(id);
       setBlog(response.data);
-      setEditForm({ title: response.data.title, content: response.data.content });
+      setEditForm({
+        title: response.data.title,
+        content: response.data.content,
+        tags: (response.data.tags || []).join(", "),
+      });
     } catch (error) {
       console.error("Error fetching blog details:", error);
       setMessage("Failed to load blog");
@@ -60,10 +64,22 @@ export default function MyBlogDetails() {
     }
   };
 
-  const handleEdit = () => setIsEditing(true);
+  const handleEdit = () => {
+    setEditForm({
+      title: blog.title,
+      content: blog.content,
+      tags: (blog.tags || []).join(", "), // convert array -> string
+    });
+    setIsEditing(true);
+  };
+
   const handleCancelEdit = () => {
     setIsEditing(false);
-    setEditForm({ title: blog.title, content: blog.content });
+    setEditForm({
+      title: blog.title,
+      content: blog.content,
+      tags: (blog.tags || []).join(", "),
+    });
   };
 
   const handleInputChange = (e) => {
@@ -73,7 +89,11 @@ export default function MyBlogDetails() {
 
   const handleSaveEdit = async () => {
     try {
-      const response = await updateBlog(id, editForm);
+      const updatedData = {
+        ...editForm,
+        tags: editForm.tags.split(",").map(t => t.trim()).filter(Boolean), // convert string -> array
+      };
+      const response = await updateBlog(id, updatedData);
       setBlog(response.data);
       setMessage("Blog updated successfully");
       setMessageType("success");
@@ -111,6 +131,15 @@ export default function MyBlogDetails() {
                 value={editForm.title}
                 onChange={handleInputChange}
                 className={styles.titleInput}
+                
+              />
+              <input
+                type="text"
+                name="tags"
+                value={editForm.tags}
+                onChange={handleInputChange}
+                className={styles.tagsInput}
+                placeholder="Enter tags, separated by commas"
               />
               <textarea
                 name="content"
@@ -131,6 +160,16 @@ export default function MyBlogDetails() {
             <p className={styles.blogmeta}>
               ✍️ Author: {blog.author?.username || "Unknown"} | 📅 {new Date(blog.createdAt).toLocaleDateString()}
             </p>
+
+            {/* Tags */}
+            {blog.tags && blog.tags.length > 0 && (
+              <div className={styles.tags}>
+                {blog.tags.map((tag, idx) => (
+                  <span key={idx} className={styles.tag}>{tag}</span>
+                ))}
+              </div>
+            )}
+
             <p className={`${styles.blogstatus} ${blog.isPublished ? styles.published : styles.draft}`}>
               📌 Status: {blog.isPublished ? "Published" : "Draft"}
             </p>

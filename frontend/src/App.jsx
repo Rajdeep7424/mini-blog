@@ -13,7 +13,6 @@ import CreateBlog from './pages/CreateBlog'
 import BlogDetails from './pages/BlogDetails/index'
 import MyBlogList from './pages/MyBlogs/index'
 import MyBlogDetails from './pages/MyBlogDetail'
-import EditBlog from './pages/EditBlog'
 import Account from './pages/Account/Account'
 import ForgotPassword from './pages/auth/ForgetPassword'
 import ResetPassword from './pages/auth/ResetPassword'
@@ -43,7 +42,6 @@ function AppWrapper() {
         <Route path='/bloglist' element={<Bloglist />} />
         <Route path='/myblogs' element={<MyBlogList />} />
         <Route path='/myblogs/:id' element={<MyBlogDetails />} />
-        <Route path='/edit/:id' element={<EditBlog />} />
         <Route path='/createBlog' element={<CreateBlog />} />
         <Route path='/blogs/:id' element={<BlogDetails />} />
         <Route path='/forgot-password' element={<ForgotPassword />} />

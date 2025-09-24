@@ -38,6 +38,16 @@ export default function BlogDetails() {
           ✍️ Author: {blog.author?.username || "Unknown"} | 📅{" "}
           {new Date(blog.createdAt).toLocaleDateString()}
         </p>
+                {/* Tags */}
+        {blog.tags && blog.tags.length > 0 && (
+          <div className={styles.tags}>
+            {blog.tags.map((tag, idx) => (
+              <span key={idx} className={styles.tag}>
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
         <p className={styles.blogcontent}>
           {blog.content}
         </p>
