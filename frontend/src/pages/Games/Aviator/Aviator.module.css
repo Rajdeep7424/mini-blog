@@ -116,7 +116,7 @@ body {
   position: absolute;
   bottom: 10%;          /* starting vertical position */
   left: 50%;            /* always horizontally centered */
-  width: clamp(50px, 12vw, 150px);
+  width: 200px;
   transform: translateX(-50%) translateY(0);
   transition: transform 0.2s ease-out;
   transform-origin: center;
@@ -215,7 +215,6 @@ body {
   .startCard, .overlay, .leaderboard {
     padding: 1.5vh 2vw;
   }
-  .plane { width: 50px; }
   .explosion { width: 50px; }
   .collectBtn, .restartBtn, .startBtn { font-size: 0.9rem; width: 90%; }
 }
@@ -223,7 +222,7 @@ body {
 /* Ultra-wide screens */
 @media (min-width: 1200px) {
   .sky { height: 50vh; }
-  .plane { width: 200px; }
+  .plane { width: 300px; }
   .explosion { width: 150px; }
   .container{flex-direction: row;}
   .scoreboard { font-size: 1.5rem; }
