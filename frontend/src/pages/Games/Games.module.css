@@ -7,14 +7,14 @@
 }
 
 .gamelist {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(4, 180px);
     gap: 2rem;
+    justify-content: center;
     padding: 0;
     margin: 2rem;
-    list-style: none;
 }
+
 
 .gameobject {
     background: #1e1e2f;

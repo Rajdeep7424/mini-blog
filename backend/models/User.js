@@ -48,6 +48,7 @@ const userSchema = mongoose.Schema(
     games: {
       carrace:{type: Number,required: true,default:0},
       minesweeper:{type: Number,required: true,default:0},
+      aviator:{type: Number, required: true, default:0},
     }
   },
   {
