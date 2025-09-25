@@ -14,6 +14,7 @@ export default function Games(){
         { name: "Car Race", link: "/carrace", theme: styles.carrace },
         { name: "Mine Sweeper", link: "/minesweeper", theme: styles.minesweeper },
         { name: "Aviator", link: "/aviator", theme: styles.tictactoe },
+        { name: "Spin Wheel", link: "/wheel", theme: styles.carrace },
     ];
 
     return(

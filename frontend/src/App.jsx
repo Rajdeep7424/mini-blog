@@ -22,6 +22,7 @@ import TictactoeMultiplayer from './pages/Games/TicTacToe/TictactoeMultiplayer'
 import CarRace from './pages/Games/CarRace/CarRace'
 import Minesweeper from './pages/Games/MineSweeper/MineSweeper'
 import Aviator from './pages/Games/Aviator/Aviator'
+import Wheel from './pages/Games/Wheels/Wheels'
 
 function AppWrapper() {
   const { match, gameResult } = useGame(); // get gameResult too
@@ -41,6 +42,7 @@ function AppWrapper() {
         <Route path='/tictactoe-multiplayer' element={<TictactoeMultiplayer />} />
         <Route path="/minesweeper" element={<Minesweeper />} />
         <Route path="/aviator" element={<Aviator />} />
+        <Route path="/wheel" element={<Wheel />} />
         <Route path='/bloglist' element={<Bloglist />} />
         <Route path='/myblogs' element={<MyBlogList />} />
         <Route path='/myblogs/:id' element={<MyBlogDetails />} />
