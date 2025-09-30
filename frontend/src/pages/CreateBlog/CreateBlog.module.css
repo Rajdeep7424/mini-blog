@@ -1,0 +1,106 @@
+.container {
+  width: 50%;
+  margin: auto;
+  padding: 1.5rem;
+  background: linear-gradient(145deg, #1e1e2f, #2c2c3f); /* dark neon background */
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  color: #e0e0e0;
+}
+
+.container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.container h2 {
+  font-size: 2.5rem;
+  text-align: center;
+  color: #00c3ff;
+  text-shadow: 0 0 6px #00c3ff;
+  margin-bottom: 1rem;
+}
+
+.container input,
+.container textarea {
+  padding: 1rem;
+  font-size: 1.2rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  background: #2c2c3f;
+  color: #e0e0e0;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.container input:focus,
+.container textarea:focus {
+  border-color: #00c3ff;
+  box-shadow: 0 0 8px #00c3ff;
+}
+
+.container button {
+  width: 40%;
+  margin: auto;
+  padding: 1rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 8px;
+  background: #d25405; /* orange theme */
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.container button:hover {
+  background: #ff6f2c;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+/* 📱 Responsive styles */
+@media (max-width: 1024px) {
+  .container {
+    width: 70%;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 90%;
+    padding: 1rem;
+  }
+  .container h2 {
+    font-size: 2rem;
+  }
+  .container input,
+  .container textarea {
+    font-size: 1rem;
+    padding: 0.9rem;
+  }
+  .container button {
+    width: 100%;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: 95%;
+    padding: 0.7rem;
+  }
+  .container h2 {
+    font-size: 1.5rem;
+  }
+  .container input,
+  .container textarea {
+    font-size: 0.95rem;
+    padding: 0.7rem;
+  }
+  .container button {
+    font-size: 0.95rem;
+    padding: 0.8rem;
+  }
+}

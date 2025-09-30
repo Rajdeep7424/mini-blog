@@ -1,0 +1,128 @@
+.blogcontainer {
+  width: 850px;
+  margin: 2.5rem auto;
+  padding: 1.5rem;
+}
+
+/* Back Button */
+.backbtn {
+  background: linear-gradient(135deg, #0d0c1a, #1a0d3a); /* dark neon gradient */
+  color: #00fff7; /* neon cyan text */
+  border: 1px solid #00fff7;
+  padding: 0.7rem 1.4rem;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 8px #00fff7, 0 4px 12px rgba(0, 255, 247, 0.3);
+  transition: all 0.3s ease;
+}
+.tags {
+  margin: 0.5rem 0 1rem 0;
+  display: flex;
+  flex-wrap: wrap; /* wrap to next line if too long */
+  gap: 8px; /* spacing between tags */
+}
+
+.tag {
+  display: inline-block;
+  background: #00c3ff;
+  color: #1e1e2f;
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+  white-space: nowrap; /* prevent tag from breaking in half */
+}
+
+
+.backbtn:hover {
+  background: linear-gradient(135deg, #0a0815, #12092c);
+  color: #33ffff; /* slightly brighter neon on hover */
+  border-color: #33ffff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 12px #33ffff, 0 6px 16px rgba(51, 255, 255, 0.35);
+}
+
+
+/* Blog Card */
+.blogcard {
+  background: linear-gradient(145deg, #1e1e2f, #2c2c3f);
+  border-radius: 16px;
+  padding: 2.2rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: #e0e0e0;
+}
+
+.blogcard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+}
+
+/* Title */
+.blogcard h2, 
+.blogtitle {
+  font-size: 2.2rem;
+  margin-bottom: 0.8rem;
+  color: #00c3ff;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-shadow: 0 0 8px #00c3ff;
+}
+
+/* Meta Info */
+.blogmeta {
+  font-size: 0.95rem;
+  color: #aaa;
+  margin-bottom: 1.6rem;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.blogmeta span {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Content */
+.blogcontent {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: #ddd;
+  white-space: pre-wrap; /* ✅ preserves spaces and line breaks */
+}
+
+/* Loading / Error */
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #aaa;
+  font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .blogcard {
+    padding: 1.4rem;
+    border-radius: 12px;
+  }
+
+  .blogcard h2 {
+    font-size: 1.6rem;
+  }
+
+  .blogcontent {
+    font-size: 1.05rem;
+  }
+
+  .backbtn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}

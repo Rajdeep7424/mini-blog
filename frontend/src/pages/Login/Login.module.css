@@ -1,0 +1,105 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: linear-gradient(145deg, #1e1e2f, #2c2c3f); /* dark neon card */
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  color: #e0e0e0;
+}
+
+.form h2 {
+  text-align: center;
+  font-size: 2rem;
+  color: #00c3ff;
+  text-shadow: 0 0 6px #00c3ff;
+  margin-bottom: 1rem;
+}
+
+.form input {
+  padding: 1rem;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #2c2c3f;
+  color: #e0e0e0;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.form input:focus {
+  border-color: #00c3ff;
+  box-shadow: 0 0 8px #00c3ff;
+}
+
+.form span {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* === Form Button Dark Neon Theme === */
+.form button {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1e1e2f, #2c2c3f); /* dark neon gradient */
+  color: #00c3ff; /* neon cyan text */
+  font-weight: bold;
+  cursor: pointer;
+  text-shadow: 0 0 6px #00c3ff;
+  box-shadow: 0 0 8px rgba(0,195,255,0.5);
+  transition: all 0.3s ease;
+}
+
+.form button:hover {
+  background: linear-gradient(135deg, #2c2c3f, #1e1e2f);
+  color: #00e0ff;
+  text-shadow: 0 0 10px #00e0ff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 16px rgba(0,224,255,0.8), 0 6px 12px rgba(0,0,0,0.3);
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form {
+    width: 90%;
+    padding: 1.5rem;
+  }
+  .form h2 {
+    font-size: 1.8rem;
+  }
+  .form input {
+    font-size: 1rem;
+    padding: 0.9rem;
+  }
+  .form button {
+    width: 100%;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .form {
+    width: 95%;
+    padding: 1rem;
+  }
+  .form h2 {
+    font-size: 1.5rem;
+  }
+  .form input {
+    font-size: 0.95rem;
+    padding: 0.8rem;
+  }
+  .form button {
+    font-size: 0.95rem;
+    padding: 0.8rem;
+  }
+}

@@ -1,0 +1,151 @@
+/* =======================
+   Container & Form
+======================= */
+.authcontainer {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.authform {
+  background: #1e1e2f; /* dark neon background */
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,195,255,0.3);
+  width: 100%;
+  max-width: 420px;
+  transition: all 0.3s ease;
+  color: #e0e0e0;
+}
+
+.authform:hover {
+  box-shadow: 0 0 30px rgba(0,195,255,0.6);
+}
+
+.authform h2 {
+  color: #00c3ff; /* neon heading */
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.authform> p {
+  color: #b0b0b0;
+  text-align: center;
+  margin-bottom: 1.8rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* =======================
+   Inputs
+======================= */
+.authform input {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 1.2rem;
+  border: 1px solid #333;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #2c2c3f;
+  color: #e0e0e0;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.authform input:focus {
+  outline: none;
+  border-color: #00c3ff;
+  box-shadow: 0 0 8px rgba(0,195,255,0.5);
+}
+
+/* =======================
+   Submit Button
+======================= */
+.authform button[type="submit"] {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #1e1e2f, #2c2c3f);
+  color: #00c3ff;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  text-shadow: 0 0 4px #00c3ff;
+  box-shadow: 0 0 8px rgba(0,195,255,0.5);
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.authform button[type="submit"]:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2c2c3f, #1e1e2f);
+  color: #00e0ff;
+  text-shadow: 0 0 8px #00e0ff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 16px rgba(0,224,255,0.8), 0 6px 12px rgba(0,0,0,0.3);
+}
+
+/* =======================
+   Messages
+======================= */
+.authmessage {
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+
+.authsuccess {
+  background-color: rgba(0,255,200,0.1);
+  border: 1px solid #00c3ff;
+  color: #00c3ff;
+}
+
+.autherror {
+  background-color: rgba(255,0,70,0.1);
+  border: 1px solid #ff0046;
+  color: #ff0046;
+}
+
+/* =======================
+   Links
+======================= */
+.authlinks {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.authlinks a,
+.authlinks button {
+  color: #00c3ff;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.authlinks a:hover,
+.authlinks button:hover {
+  color: #00e0ff;
+  text-decoration: underline;
+}
+
+/* =======================
+   Responsive
+======================= */
+@media (max-width: 480px) {
+  .authform {
+    padding: 1.8rem;
+  }
+
+  .authform h2 {
+    font-size: 1.5rem;
+  }
+}

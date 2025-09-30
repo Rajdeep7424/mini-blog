@@ -1,0 +1,173 @@
+.container {
+  text-align: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  padding: 1rem;
+  margin-top: 2rem;
+}
+
+.wheelWrapper {
+  width: 350px;
+  height: 350px;
+  margin: 1.5rem auto;
+  position: relative;
+  border-radius: 50%;
+  border: 6px solid #fff;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15), inset 0 0 30px rgba(0,0,0,0.1);
+  background: radial-gradient(circle at center, #fff 0%, #f8f9fa 100%);
+}
+
+.wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+}
+
+/* Remove these unused styles if they exist in your CSS:
+.segment {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  transform-origin: 50% 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.segment span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  text-align: left;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+  font-size: 1rem;
+  transform-origin: left center;
+  padding-left: 10px;
+}
+*/
+
+.centerCircle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70px;
+  height: 70px;
+  margin-left: -35px;
+  margin-top: -35px;
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  border-radius: 50%;
+  z-index: 5;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.1);
+  border: 3px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.label {
+  position: absolute; /* Changed from relative */
+  top: 50%; /* Changed from 30% */
+  left: 50%; /* Changed from 30% */
+  transform-origin: 0 0;
+  font-weight: bold;
+  font-size: 1rem;
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+}
+.pointer {
+  width: 0;
+  height: 0;
+  border-left: 25px solid transparent;
+  border-right: 25px solid transparent;
+  border-bottom: 50px solid #e74c3c;
+  margin: 0 auto;
+  position: relative;
+  top: -15px;
+  z-index: 10;
+  rotate: 180deg;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+  animation: bounce 1.5s infinite ease-in-out;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.05); }
+}
+
+.spinBtn {
+  margin-top: 2rem;
+  margin-right: 1rem;
+  padding: 1rem 3rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  transition: all 0.4s ease;
+}
+
+.spinBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.result {
+  margin-top: 2rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #27ae60;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.winnerAnimation {
+  animation: celebrate 0.6s ease-in-out 3;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes celebrate {
+  0%,100% { transform: scale(1); color: #27ae60; }
+  25% { transform: scale(1.1); color: #e74c3c; }
+  50% { transform: scale(1.05); color: #3498db; }
+  75% { transform: scale(1.1); color: #f39c12; }
+}
+
+.stats {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+.stats p {
+  margin: 0.5rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+  .wheelWrapper { width: 250px; height: 250px; }
+  .label { font-size: 0.85rem; }
+  .result { font-size: 1.4rem; }
+}

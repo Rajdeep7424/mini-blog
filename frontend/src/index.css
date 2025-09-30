@@ -1,0 +1,90 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.87);
+
+  /* Dark neon gradient background */
+  background: linear-gradient(135deg, #374d60 0%, #6c21b3 100%);
+  /* background: linear-gradient(135deg, #2b223c 0%, #3b1270 100%); */
+
+  
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  /* Neon accent color */
+  --accent: #00fff7;
+  --accent-hover: #33ffff;
+}
+
+a {
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+a:hover {
+  color: var(--accent-hover);
+  text-shadow: 0 0 8px var(--accent-hover);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: inherit;
+  color: inherit;
+  transition: background 0.3s ease;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+button:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  transform: translateY(-1px);
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto var(--accent);
+}
+
+/* Optional: add neon glow effect to headings */
+h1, h2, h3, h4, h5, h6 {
+  text-shadow: 0 0 6px var(--accent);
+  font-weight: 600;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+    --accent: #646cff;
+    --accent-hover: #535bf2;
+  }
+  a:hover {
+    color: var(--accent-hover);
+    text-shadow: none;
+  }
+  button {
+    background-color: #f9f9f9;
+    color: var(--accent);
+  }
+}

@@ -1,0 +1,73 @@
+footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #1e1e2f, #2c2c3f); /* dark gradient like navbar */
+  color: #fff;
+  padding: 2rem;
+  margin-top: auto; 
+  text-align: center;
+  font-weight: 600;
+  box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
+  border-radius: 12px 12px 0 0;
+}
+
+footer h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #00c3ff;
+  text-shadow: 0 0 8px #00c3ff;
+}
+
+footer ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+}
+
+footer ul li a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+footer ul li a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background: #00c3ff;
+  transition: 0.3s ease;
+}
+
+footer ul li a:hover::after {
+  width: 100%;
+}
+
+footer ul li a:hover {
+  color: #00c3ff;
+  text-shadow: 0 0 6px #00c3ff;
+}
+
+footer p {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  color: #aaa;
+}
+
+/* Responsive for small screens */
+@media (max-width: 600px) {
+  footer ul {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

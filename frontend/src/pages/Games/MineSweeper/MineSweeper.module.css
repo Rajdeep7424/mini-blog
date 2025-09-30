@@ -1,0 +1,191 @@
+/* Container */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #fff;
+}
+
+/* Master Board: board + leaderboard */
+.masterBoard {
+  display: flex;
+  gap: 2rem;
+  justify-content: center; /* center horizontally */
+  align-items: flex-start;
+  flex-wrap: wrap; /* allow wrapping on small screens */
+}
+
+/* Board styling */
+.board {
+  display: inline-block;
+  margin: 20px;
+  background: #23233f;
+  padding: 12px;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7), inset 0 0 8px rgba(0,0,0,0.2);
+}
+
+/* Row */
+.row {
+  display: flex;
+}
+
+/* Cell styling */
+.cell {
+  width: 52px;
+  height: 52px;
+  border: 2px solid #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #2c2c3f, #1e1e2f);
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.4rem;
+  color: #eee;
+  transition: all 0.2s ease;
+  user-select: none;
+  border-radius: 6px;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+}
+
+.cell:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 255, 255, 0.6), inset 0 0 5px rgba(0,255,255,0.3);
+}
+
+/* Revealed cell */
+.cell.revealed {
+  background: linear-gradient(145deg, #1f1f2e, #2e2e44);
+  cursor: default;
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
+  color: #00fff7;
+}
+
+/* Mines */
+.cell.isMine {
+  color: #ff4d4f;
+  font-size: 1.5rem;
+  text-shadow: 0 0 4px #ff4d4f, 0 0 10px #ff1a1a;
+}
+
+/* Flagged cells */
+.cell.isFlagged {
+  background: #ffd700;
+  color: #333;
+  font-weight: bold;
+  text-shadow: 0 0 4px #ffd700;
+}
+
+/* Safe cell (diamond icon) */
+.cell.safe {
+  color: #00fff7;
+  font-size: 1.3rem;
+  text-shadow: 0 0 6px #00fff7;
+}
+
+/* Start button */
+.startBtn {
+  padding: 10px 24px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #00c3ff, #33ffff);
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0,195,255,0.5);
+}
+
+.startBtn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(0, 255, 255, 0.7), inset 0 0 8px rgba(0,255,255,0.3);
+}
+
+/* Message */
+.message {
+  margin: 12px 0;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #ffd700;
+  text-align: center;
+  text-shadow: 0 0 4px #ffd700, 0 0 10px #ffa500;
+}
+
+/* Scoreboard */
+.scoreboard {
+  display: flex;
+  justify-content: space-around;
+  width: 260px;
+  margin: 12px 0 22px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #2c2c44;
+  font-size: 1.05rem;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset 0 0 6px rgba(0,255,255,0.2);
+  color: #00fff7;
+}
+
+/* Leaderboard */
+.leaderboard {
+  background: rgba(0, 0, 0, 0.405);
+  color: #fff;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  max-width: 300px;
+  text-align: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+}
+
+.leaderboard h3 {
+  margin-bottom: 0.8rem;
+  font-size: 1.3rem;
+  color: #ffd700;
+  text-shadow: 0 0 4px #ffd700;
+}
+
+.leaderboard div {
+  padding: 0.3rem 0;
+  font-size: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.leaderboard div:last-child {
+  border-bottom: none;
+}
+
+/* Responsive: shift leaderboard below board on small screens */
+@media (max-width: 768px) {
+  .masterBoard {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .leaderboard {
+    margin-top: 1rem;
+    width: 90%;
+  }
+
+  .cell {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .startBtn {
+    padding: 8px 18px;
+    font-size: 1rem;
+  }
+
+  .scoreboard {
+    width: 220px;
+    font-size: 0.95rem;
+  }
+}

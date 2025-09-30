@@ -1,0 +1,252 @@
+/* === Container === */
+.container {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* === User Card === */
+.UserCard {
+  width: 100%;
+  max-width: 480px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: linear-gradient(145deg, #1e1e2f, #2c2c3f); /* dark neon gradient */
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: #f0f0f0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.UserCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #00c3ff;
+  text-shadow: 0 0 6px #00c3ff;
+}
+
+.subtitle {
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  color: #bbbbbb;
+  font-weight: 600;
+}
+
+/* === User Info === */
+.userInfo {
+  margin-bottom: 1.8rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.label {
+  font-weight: 500;
+  color: #cccccc;
+  font-size: 1rem;
+}
+
+.username,
+.usermail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 1.05rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.username {
+  color: #ff6f2c; /* neon orange accent */
+}
+
+.usermail {
+  color: #00c3ff; /* neon blue accent */
+}
+
+.username:hover,
+.usermail:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* === Inline Editing === */
+.editGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  margin-top: 0.4rem;
+  width: 100%;
+}
+
+.inputInline {
+  flex: 1;
+  min-width: 180px;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid #333;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  background: #2a2a2a;
+  color: #f0f0f0;
+  transition: all 0.25s ease;
+  margin-left: 2em;
+}
+
+.inputInline:focus {
+  background: #1e1e2f;
+  border-color: #ff6f2c;
+  box-shadow: 0 0 0 3px rgba(255, 111, 44, 0.25);
+  outline: none;
+}
+
+/* === Edit / Save / Cancel Buttons === */
+.iconButton {
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0.45rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  background: #2a2a2a;
+  color: #bbb;
+}
+
+.iconButton:hover {
+  transform: scale(1.1);
+  background: rgba(255, 111, 44, 0.15);
+  color: #ff6f2c;
+}
+
+/* Action colors */
+.iconButton.save {
+  color: #28a745;
+}
+.iconButton.save:hover {
+  background: rgba(40, 167, 69, 0.15);
+  color: #28a745;
+}
+
+.iconButton.cancel {
+  color: #dc3545;
+}
+.iconButton.cancel:hover {
+  background: rgba(220, 53, 69, 0.15);
+  color: #dc3545;
+}
+
+/* === Logout Button === */
+.actions {
+  display: flex;
+  justify-content: center;
+}
+
+.logoutButton {
+  padding: 0.8rem 1.7rem;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.logoutButton:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+}
+
+/* === Messages === */
+.message {
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.success {
+  background-color: rgba(40, 167, 69, 0.15);
+  color: #28a745;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.error {
+  background-color: rgba(220, 53, 69, 0.15);
+  color: #dc3545;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.dismissButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: inherit;
+  padding: 0;
+  margin-left: 0.5rem;
+  line-height: 1;
+}
+
+.dismissButton:hover {
+  opacity: 0.7;
+}
+
+/* === Responsive === */
+@media (max-width: 600px) {
+  .UserCard {
+    padding: 1.5rem;
+    margin: 1.5rem auto;
+  }
+
+  .infoItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .message {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .dismissButton {
+    align-self: flex-end;
+  }
+}

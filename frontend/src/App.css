@@ -1,0 +1,26 @@
+#root {
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+  
+  /* Optional subtle neon glow effect */
+  /* box-shadow: inset 0 0 50px rgba(0, 195, 255, 0.1), inset 0 0 80px rgba(255, 0, 255, 0.05); */
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  /* Smooth scrolling for neon glow transitions */
+  /* transition: background 0.3s ease, box-shadow 0.3s ease; */
+}
+
+/* Optional: Neon border glow on the edges */
+/* #root::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  border: 2px solid rgba(0, 195, 255, 0.2);
+  box-shadow: 0 0 50px rgba(0, 195, 255, 0.2);
+  border-radius: 0;
+} */
