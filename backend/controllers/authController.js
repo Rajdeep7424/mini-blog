@@ -256,9 +256,7 @@ const requestPasswordReset = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
-      return res.status(400).json({
-        message: "Email is required",
-      });
+      return res.status(400).json({ message: "Email is required" });
     }
 
     const user = await User.findOne({ email });
@@ -270,67 +268,62 @@ const requestPasswordReset = async (req, res) => {
       });
     }
 
-    // Generate reset token
     const resetToken = crypto.randomBytes(32).toString("hex");
 
-    // Hash token before saving
     user.resetPasswordToken = crypto
       .createHash("sha256")
       .update(resetToken)
       .digest("hex");
 
-    // Token expiry (15 mins)
     user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
-
     await user.save();
 
-    // Frontend reset URL
-    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+    // ✅ FIX: Use your LIVE Netlify URL instead of localhost
+    const frontendUrl = process.env.FRONTEND_URL || "https://blogsvault.netlify.app";
+    const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
 
-    // Nodemailer transporter
+    // ✅ FIX: Updated Transporter settings for Render
     const transporter = nodemailer.createTransport({
       service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // true for 465, false for other ports
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        pass: process.env.EMAIL_PASS, // Ensure this is a 16-character App Password
       },
+      tls: {
+        rejectUnauthorized: false // Helps with connection timeouts on cloud hosts
+      }
     });
 
-    // Send email
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: `"BlogPost Support" <${process.env.EMAIL_USER}>`,
       to: user.email,
       subject: "Password Reset Request",
       html: `
-        <h2>Password Reset</h2>
-
-        <p>You requested a password reset.</p>
-
-        <p>Click the link below to reset your password:</p>
-
-        <a href="${resetUrl}">
-          Reset Password
-        </a>
-
-        <p>This link expires in 15 minutes.</p>
-
-        <p>If you did not request this, please ignore this email.</p>
+        <div style="font-family: sans-serif; padding: 20px; color: #333;">
+          <h2>Password Reset</h2>
+          <p>You requested a password reset for your BlogPost account.</p>
+          <p>Click the button below to reset it. This link expires in 15 minutes.</p>
+          <a href="${resetUrl}" style="background: #00c3ff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Password</a>
+          <p>If you did not request this, please ignore this email.</p>
+        </div>
       `,
     });
 
-    // Final response
     res.status(200).json({
       message: "Password reset link sent to your email",
     });
 
   } catch (error) {
     console.error("Error in password reset:", error);
-
     res.status(500).json({
       message: "Server error during password reset",
     });
   }
 };
+
 // Also update the resetPassword function to handle demo tokens
 const resetPassword = async (req, res) => {
   try {
@@ -341,19 +334,18 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
 
-    // Handle demo token
+    // Handle demo token (Good for testing!)
     if (token === "demo-reset-token-12345") {
       return res.status(400).json({ 
         message: "This is a demo token. Use a real account for actual password reset." 
       });
     }
 
-    // Hash the token to compare with DB
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
     const user = await User.findOne({
       resetPasswordToken: hashedToken,
-      resetPasswordExpire: { $gt: Date.now() }, // still valid
+      resetPasswordExpire: { $gt: Date.now() }, 
     });
 
     if (!user) {
@@ -372,7 +364,8 @@ const resetPassword = async (req, res) => {
 
     res.json({ message: "Password reset successful" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Reset Password Error:", error);
+    res.status(500).json({ message: "Error resetting password" });
   }
 };
 
