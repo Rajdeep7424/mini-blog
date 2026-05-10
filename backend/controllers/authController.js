@@ -254,47 +254,83 @@ const updatePassword = async (req, res) => {
 const requestPasswordReset = async (req, res) => {
   try {
     const { email } = req.body;
-    
+
     if (!email) {
-      return res.status(400).json({ message: "Email is required" });
+      return res.status(400).json({
+        message: "Email is required",
+      });
     }
 
     const user = await User.findOne({ email });
 
+    // Security: don't reveal whether user exists
     if (!user) {
-      // For security, don't reveal if email exists or not
-      return res.status(200).json({ 
-        message: "If the email exists, a reset link has been generated",
-        resetToken: "demo-reset-token-12345",
-        resetUrl: `http://localhost:5173/reset-password/demo-reset-token-12345`
+      return res.status(200).json({
+        message: "If the email exists, a reset link has been sent",
       });
     }
 
     // Generate reset token
     const resetToken = crypto.randomBytes(32).toString("hex");
+
+    // Hash token before saving
     user.resetPasswordToken = crypto
       .createHash("sha256")
       .update(resetToken)
       .digest("hex");
-    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000; // 15 minutes
+
+    // Token expiry (15 mins)
+    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
+
     await user.save();
 
-    // Create reset URL with the correct frontend port (5173)
+    // Frontend reset URL
     const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
 
-    // Return the reset link to be displayed on screen
-    res.json({ 
-      message: "Password reset link generated successfully",
-      resetToken: resetToken,
-      resetUrl: resetUrl,
-      note: "Click the link below to reset your password"
+    // Nodemailer transporter
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
     });
+
+    // Send email
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: "Password Reset Request",
+      html: `
+        <h2>Password Reset</h2>
+
+        <p>You requested a password reset.</p>
+
+        <p>Click the link below to reset your password:</p>
+
+        <a href="${resetUrl}">
+          Reset Password
+        </a>
+
+        <p>This link expires in 15 minutes.</p>
+
+        <p>If you did not request this, please ignore this email.</p>
+      `,
+    });
+
+    // Final response
+    res.status(200).json({
+      message: "Password reset link sent to your email",
+    });
+
   } catch (error) {
     console.error("Error in password reset:", error);
-    res.status(500).json({ message: "Server error during password reset" });
+
+    res.status(500).json({
+      message: "Server error during password reset",
+    });
   }
 };
-
 // Also update the resetPassword function to handle demo tokens
 const resetPassword = async (req, res) => {
   try {

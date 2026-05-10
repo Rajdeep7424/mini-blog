@@ -13,8 +13,8 @@ export default function Games(){
         { name: "TicTacToe", link: "/tictactoe", theme: styles.tictactoe },
         { name: "Car Race", link: "/carrace", theme: styles.carrace },
         { name: "Mine Sweeper", link: "/minesweeper", theme: styles.minesweeper },
-        { name: "Aviator", link: "/aviator", theme: styles.tictactoe },
-        { name: "Spin Wheel", link: "/wheel", theme: styles.carrace },
+        { name: "Aviator", link: "/aviator", theme: styles.aviator },
+        { name: "Spin Wheel", link: "/wheel", theme: styles.wheel },
     ];
 
     return(
