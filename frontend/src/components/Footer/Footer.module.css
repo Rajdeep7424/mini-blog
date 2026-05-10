@@ -1,4 +1,4 @@
-footerContainer {
+.footerContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,14 +14,14 @@ footerContainer {
   border-top: 1px solid rgba(0, 195, 255, 0.2); /* Added a subtle neon border top */
 }
 
-footerContainer h2 {
+.footerContainer h2 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
   color: #00c3ff;
   text-shadow: 0 0 8px #00c3ff;
 }
 
-footerContainer ul {
+.footerContainer ul {
   list-style: none;
   display: flex;
   gap: 1.5rem;
@@ -31,7 +31,7 @@ footerContainer ul {
   margin: 0;
 }
 
-footerContainer ul li a {
+.footerContainer ul li a {
   text-decoration: none;
   color: #fff;
   font-weight: 500;
@@ -40,7 +40,7 @@ footerContainer ul li a {
   padding: 5px 0; /* Easier to click on mobile */
 }
 
-footerContainer ul li a::after {
+.footerContainer ul li a::after {
   content: '';
   position: absolute;
   left: 0;
@@ -51,16 +51,16 @@ footerContainer ul li a::after {
   transition: 0.3s ease;
 }
 
-footerContainer ul li a:hover::after {
+.footerContainer ul li a:hover::after {
   width: 100%;
 }
 
-footerContainer ul li a:hover {
+.footerContainer ul li a:hover {
   color: #00c3ff;
   text-shadow: 0 0 6px #00c3ff;
 }
 
-footerContainer p {
+.footerContainer p {
   margin-top: 1.5rem;
   font-size: 0.9rem;
   opacity: 0.8;
@@ -69,11 +69,11 @@ footerContainer p {
 
 /* Responsive for small screens */
 @media (max-width: 600px) {
-  footerContainer {
+  .footerContainer {
     padding: 1.5rem 1rem; /* Slightly less padding on mobile */
   }
 
-  footerContainer ul {
+  .footerContainer ul {
     flex-direction: column;
     gap: 1rem; /* More space for fingers to tap links */
   }
