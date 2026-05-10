@@ -11,7 +11,7 @@ export const GameProvider = ({ children, user }) => {
   useEffect(() => {
     if (!user?._id) return;
 
-    const newSocket = io("http://localhost:5000");
+    const newSocket = io("${import.meta.env.VITE_API_URL}");
     setSocket(newSocket);
 
     newSocket.on("connect", () => {

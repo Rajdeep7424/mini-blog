@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import styles from "./Minesweeper.module.css";
 import { useAuth } from "../../../context/AuthContext";
 
-const BACKEND_BASE = "http://localhost:5000/api/games";
+const BACKEND_BASE = "${import.meta.env.VITE_API_URL}/api/games";
 
 export default function Minesweeper() {
   const { user } = useAuth();
