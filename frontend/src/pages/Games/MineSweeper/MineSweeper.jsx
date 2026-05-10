@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import styles from "./Minesweeper.module.css";
+import styles from "./MineSweeper.module.css";
 import { useAuth } from "../../../context/AuthContext";
 
 const BACKEND_BASE = "${import.meta.env.VITE_API_URL}/api/games";
