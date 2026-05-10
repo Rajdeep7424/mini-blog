@@ -1,7 +1,9 @@
-import './Footer.module.css'
+import styles from './Footer.module.css'; // Change this line
+
 export default function Footer() {
   return (
-    <footer>
+    /* Use the styles object here */
+    <footer className={styles.footerContainer}> 
       <h2>BlogPosts</h2>
       <ul>
         <li><a href="/">Home</a></li>
