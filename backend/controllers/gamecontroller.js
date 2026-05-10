@@ -1,5 +1,5 @@
 // backend/controllers/gameController.js
-import Matchmaking from '../models/matchmaking.js';
+import Matchmaking from '../models/Matchmaking.js';
 import Match from '../models/Match.js';
 import User from '../models/User.js';
 import Minesweeper from '../models/minesweeper.js';
