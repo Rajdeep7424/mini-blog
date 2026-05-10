@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import Match from '../models/Match.js';
-import Matchmaking from '../models/matchmaking.js';
+import Matchmaking from '../models/Matchmaking.js';
 import User from '../models/User.js';
 
 export default function(io) {
