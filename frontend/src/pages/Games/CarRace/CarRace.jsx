@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./CarRace.module.css";
 import { useAuth } from "../../../context/AuthContext";
 
-const BACKEND_BASE = "${import.meta.env.VITE_API_URL}/api/games";
+const BACKEND_BASE = `${import.meta.env.VITE_API_URL}/api/games`;
 
 export default function CarRace() {
   const { user } = useAuth();

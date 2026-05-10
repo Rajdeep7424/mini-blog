@@ -58,7 +58,7 @@ export default function Account() {
       const token = localStorage.getItem("token");
 
       try {
-        const res = await fetch("${import.meta.env.VITE_API_URL}/api/auth/profile/password", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/profile/password`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
