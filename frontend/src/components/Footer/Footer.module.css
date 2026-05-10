@@ -3,14 +3,15 @@ footer {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(145deg, #1e1e2f, #2c2c3f); /* dark gradient like navbar */
+  background: linear-gradient(145deg, #1e1e2f, #2c2c3f);
   color: #fff;
-  padding: 2rem;
+  padding: 2rem 1rem; /* Added horizontal padding for safety */
   margin-top: auto; 
+  width: 100%; /* Ensure it spans full width */
   text-align: center;
   font-weight: 600;
   box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
-  border-radius: 12px 12px 0 0;
+  border-top: 1px solid rgba(0, 195, 255, 0.2); /* Added a subtle neon border top */
 }
 
 footer h2 {
@@ -25,6 +26,7 @@ footer ul {
   display: flex;
   gap: 1.5rem;
   flex-wrap: wrap;
+  justify-content: center; /* Center the links */
   padding: 0;
   margin: 0;
 }
@@ -35,6 +37,7 @@ footer ul li a {
   font-weight: 500;
   transition: all 0.3s ease;
   position: relative;
+  padding: 5px 0; /* Easier to click on mobile */
 }
 
 footer ul li a::after {
@@ -58,7 +61,7 @@ footer ul li a:hover {
 }
 
 footer p {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   font-size: 0.9rem;
   opacity: 0.8;
   color: #aaa;
@@ -66,8 +69,12 @@ footer p {
 
 /* Responsive for small screens */
 @media (max-width: 600px) {
+  footer {
+    padding: 1.5rem 1rem; /* Slightly less padding on mobile */
+  }
+
   footer ul {
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem; /* More space for fingers to tap links */
   }
 }

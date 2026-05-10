@@ -8,13 +8,15 @@
 
 .gamelist {
     display: grid;
-    grid-template-columns: repeat(4, 180px);
+    /* Changed from repeat(4, 180px) to auto-fit */
+    grid-template-columns: repeat(auto-fit, 180px);
     gap: 2rem;
     justify-content: center;
     padding: 0;
-    margin: 2rem;
+    /* Added max-width and margin auto for better centering on large screens */
+    max-width: 1200px;
+    margin: 2rem auto;
 }
-
 
 .gameobject {
     background: #1e1e2f;
@@ -66,20 +68,22 @@
     left: 125%;
 }
 
-.tictactoe {
-    background: linear-gradient(135deg, #ff6a00, #ee0979);
-}
+/* Colors */
+.tictactoe { background: linear-gradient(135deg, #ff6a00, #ee0979); }
+.minesweeper { background: linear-gradient(135deg, #00c6ff, #0072ff); }
+.carrace { background: linear-gradient(135deg, #f7971e, #ffd200); }
+.aviator{ background: linear-gradient(135deg, #d23bee,#ee0979); }
+.wheel{ background: linear-gradient(90deg, violet,indigo,blue,green,yellow,orange,red); }
 
-.minesweeper {
-    background: linear-gradient(135deg, #00c6ff, #0072ff);
-}
-
-.carrace {
-    background: linear-gradient(135deg, #f7971e, #ffd200);
-}
-.aviator{
-    background: linear-gradient(135deg, #d23bee,#ee0979);
-}
-.wheel{
-    background: linear-gradient(90deg, violet,indigo,blue,green,yellow,orange,red);
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .head {
+        font-size: 1.8rem; /* Smaller heading on mobile */
+        margin: 1.5rem 0;
+    }
+    
+    .gamelist {
+        gap: 1.5rem; /* Slightly tighter gap on smaller screens */
+        margin: 1rem;
+    }
 }

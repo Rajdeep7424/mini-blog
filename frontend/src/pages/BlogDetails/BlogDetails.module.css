@@ -1,5 +1,7 @@
 .blogcontainer {
-  width: 850px;
+  /* Changed to max-width and added width for responsiveness */
+  max-width: 850px;
+  width: 90%; 
   margin: 2.5rem auto;
   padding: 1.5rem;
 }
@@ -18,6 +20,7 @@
   box-shadow: 0 0 8px #00fff7, 0 4px 12px rgba(0, 255, 247, 0.3);
   transition: all 0.3s ease;
 }
+
 .tags {
   margin: 0.5rem 0 1rem 0;
   display: flex;
@@ -37,7 +40,6 @@
   white-space: nowrap; /* prevent tag from breaking in half */
 }
 
-
 .backbtn:hover {
   background: linear-gradient(135deg, #0a0815, #12092c);
   color: #33ffff; /* slightly brighter neon on hover */
@@ -45,7 +47,6 @@
   transform: translateY(-2px);
   box-shadow: 0 0 12px #33ffff, 0 6px 16px rgba(51, 255, 255, 0.35);
 }
-
 
 /* Blog Card */
 .blogcard {
@@ -96,6 +97,7 @@
   line-height: 1.8;
   color: #ddd;
   white-space: pre-wrap; /* ✅ preserves spaces and line breaks */
+  word-wrap: break-word; /* Added to prevent long strings from breaking layout */
 }
 
 /* Loading / Error */
@@ -108,12 +110,19 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .blogcontainer {
+    width: 95%; /* More breathing room on mobile */
+    margin: 1rem auto;
+    padding: 0.5rem;
+  }
+
   .blogcard {
     padding: 1.4rem;
     border-radius: 12px;
   }
 
-  .blogcard h2 {
+  .blogcard h2, 
+  .blogtitle {
     font-size: 1.6rem;
   }
 
@@ -124,5 +133,13 @@
   .backbtn {
     padding: 0.6rem 1.2rem;
     font-size: 0.9rem;
+  }
+}
+
+/* Extra Small Screens */
+@media (max-width: 480px) {
+  .blogmeta {
+    gap: 0.8rem;
+    font-size: 0.85rem;
   }
 }
