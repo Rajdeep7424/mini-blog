@@ -258,9 +258,9 @@ export const flagCell = async (req, res) => {
 // Update best score
 export const updateBestScore = async (req, res) => {
   try {
-    const { userId, game, score } = req.body;
-
-    if (!userId || !game || typeof score !== "number") {
+    const { game, score } = req.body;
+    const userId = req.user._id;
+    if ( !game || typeof score !== "number") {
       return res.status(400).json({ error: "Invalid input" });
     }
 

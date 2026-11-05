@@ -15,7 +15,7 @@ router.post('/move', authMiddleware, makeMove);   // { matchId, index }
 router.post("/minesweeper/start", startMinesweeper);
 router.post("/minesweeper/reveal", revealCell);
 router.post("/minesweeper/flag", flagCell);
-router.post("/score", updateBestScore);
+router.post("/score",authMiddleware, updateBestScore);
 
 // GET /api/games/best/:userId/:game
 router.get("/best/:userId/:game", async (req, res) => {

@@ -5,7 +5,7 @@ import { useAuth } from "../../../context/AuthContext";
 const BACKEND_BASE = `${import.meta.env.VITE_API_URL}/api/games`;
 
 export default function Aviator() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const intervalRef = useRef(null);
 
   const [time, setTime] = useState(0);
@@ -43,8 +43,10 @@ export default function Aviator() {
     try {
       const res = await fetch(`${BACKEND_BASE}/score`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user._id, game: "aviator", score: finalScore }),
+        headers: { "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+         },
+        body: JSON.stringify({game: "aviator", score: finalScore }),
       });
       const data = await res.json();
       if (res.ok && data.bestScores?.aviator !== undefined) {
