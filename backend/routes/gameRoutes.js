@@ -5,13 +5,13 @@ import { joinQueue, makeMove } from '../controllers/gamecontroller.js';
 import { protect as authMiddleware } from '../middleware/authMiddleware.js';
 import { startMinesweeper, revealCell, flagCell, updateBestScore } from "../controllers/gamecontroller.js";
 
-router.post("/score", authMiddleware, updateBestScore);
 
 
 const router = express.Router();
 
 router.post('/join', authMiddleware, joinQueue);  // { game, socketId? }
 router.post('/move', authMiddleware, makeMove);   // { matchId, index }
+router.post("/score", authMiddleware, updateBestScore);
 
 // Minesweeper routes
 router.post("/minesweeper/start",authMiddleware, startMinesweeper);
