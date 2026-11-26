@@ -1,6 +1,6 @@
 # BlogPost
 
-A full-stack publishing platform with private drafts and JWT authentication — plus five games, including an online multiplayer tic-tac-toe with matchmaking.
+A full-stack publishing platform with private drafts, JWT authentication, and five games — including an online multiplayer tic-tac-toe with real-time matchmaking.
 
 **Live demo:** https://blogsvault.netlify.app
 
@@ -8,9 +8,15 @@ A full-stack publishing platform with private drafts and JWT authentication — 
 
 ## What it is
 
-BlogPost is a blog platform where posts stay private until you choose to publish them — so it works equally as a personal journal or as a public blog. Alongside the writing side, it hosts five games: an online multiplayer tic-tac-toe, a server-generated minesweeper, and three scored arcade games.
+BlogPost is a blog platform where a post stays private until you choose to publish it, so it works equally as a personal journal or as a public blog. Alongside the writing side it hosts five games: an online multiplayer tic-tac-toe, a server-generated minesweeper, and three arcade games.
 
-The project exists to work through the parts of a web app that tutorials tend to skip: server-authoritative game state, atomic matchmaking under concurrency, and authentication flows that hold up when deployed rather than just on localhost.
+The project was built to work through the parts of a web app that tutorials skip — server-authoritative game state, an atomic matchmaking queue, and authentication that survives a real deployment rather than only localhost.
+
+---
+
+## How it was built
+
+The frontend and the UI are mine. The backend and the game logic were built with substantial AI assistance and then audited file by file. The **Known limitations** section below is the record of what that audit turned up — it is there because the audit happened, not despite it.
 
 ---
 
@@ -18,36 +24,36 @@ The project exists to work through the parts of a web app that tutorials tend to
 
 **Blogging**
 
-- Register and log in with JWT-based authentication
-- Write posts as private drafts, publish when ready
+- Register and log in with JWT authentication
+- Write posts as private drafts, publish when ready, unpublish again
 - Edit and delete your own posts
-- Public blog feed with pagination
-- Per-post detail pages with author attribution
-- Dark and light themes, persisted per user
+- Public feed of published posts with pagination
+- Per-post pages with author attribution
+- Dark and light themes
 
 **Games**
 
-*Tic-tac-toe, in three modes:*
+*Tic-tac-toe, three modes:*
 
-- **Local two-player** — both players take turns on the same device
-- **Versus the computer** — the opponent uses a win → block → centre → corner → any heuristic rather than random play
-- **Online** — matched against a waiting opponent over Socket.IO, with draw offers both ways
+- **Local two-player** — both players share one device
+- **Versus the computer** — the opponent plays a win → block → centre → corner → any heuristic rather than moving at random
+- **Online** — matched against a waiting opponent over Socket.IO, with draw offers in both directions and a per-turn timer
 
 *Minesweeper:*
 
-- Single-player, with the board generated on the server so the mine positions never reach the client until a cell is revealed
+- Single-player, with the board generated server-side so mine positions never reach the client before a cell is revealed
 
-*Three arcade games:*
+*Aviator, Car Race and Wheels:*
 
-- Aviator and Car Race — each with a personal best and a global leaderboard
-- Wheels — a spin-the-wheel game, unscored
+- Aviator and Car Race each keep a personal best and a global leaderboard
+- Wheels is an unscored spin-the-wheel game
 
 **Accounts**
 
 - bcrypt password hashing
 - 30-day JWT sessions
-- Forgot-password flow with a hashed, 15-minute reset token
-- Rate limiting on auth endpoints
+- Forgot-password flow with a hashed, time-limited reset token
+- Profile editing for username, email and password
 - Protected routes on both the API and the client
 
 ---
@@ -56,36 +62,34 @@ The project exists to work through the parts of a web app that tutorials tend to
 
 | Layer | Stack |
 |---|---|
-| **Frontend** | React 19, React Router 7, Vite 7, CSS Modules, lucide-react |
-| **Backend** | Node.js, Express 5, Socket.IO 4 |
-| **Database** | MongoDB with Mongoose 8 |
-| **Auth** | JWT, bcryptjs, express-rate-limit |
-| **Email** | Nodemailer |
-| **Deployment** | Netlify (frontend), Render (backend) |
+| Frontend | React 19, React Router 7, Vite 7, CSS Modules, lucide-react |
+| Backend | Node.js, Express 5, Socket.IO 4 |
+| Database | MongoDB with Mongoose 8 |
+| Auth | JWT, bcryptjs, express-rate-limit |
+| Email | Nodemailer |
+| Hosting | Netlify (frontend), Render (backend) |
 
 ---
 
-## Architecture notes
+## How the harder parts work
 
-How the harder parts work.
+**Online tic-tac-toe is server-authoritative.** The client never decides an outcome. Each move is checked server-side: the match must be active, it must be that player's turn, and the cell must be empty. The winning lines are then evaluated against the server's own copy of the board. A tampered client can send whatever it likes; anything illegal is rejected.
 
-**The online tic-tac-toe is server-authoritative.** The client never decides the outcome. On every move the server validates that the match is active, that it's this player's turn, that the cell is empty, and then evaluates the winning lines against its own copy of the board. A tampered client can send whatever it likes; the server rejects anything illegal.
+**Matchmaking is a single atomic pop.** On request, the player inserts themselves into the queue and then performs one `findOneAndDelete` sorted by creation time, which claims the oldest waiting opponent in a single operation rather than reading and then writing. Two players cannot claim the same opponent concurrently.
 
-**Matchmaking is an atomic queue pop.** When you request a match, you insert yourself into the queue and then attempt a single `findOneAndDelete` sorted by creation time — which claims the oldest waiting opponent in one operation rather than a read followed by a write. That avoids two players claiming the same opponent concurrently.
+**Score writes go through an authenticated endpoint.** The server knows who is posting and refuses any game name it does not recognise. What it cannot do is verify that the score was actually earned — see **Known limitations**.
 
-**Game scores are server-written.** The client cannot post a score directly. Score updates go through the game's own authenticated route, and the game identifier is checked against an allowlist before it's used to build a database field path.
+**Reset tokens are hashed before storage.** The raw token goes into the email link; only its SHA-256 hash is stored, with a 15-minute expiry. A database leak therefore does not hand out working reset links.
 
-**Password reset tokens are hashed before storage.** The raw token goes in the email link; only its SHA-256 hash is persisted, with a 15-minute expiry. A database leak therefore doesn't hand out working reset links.
-
-**The frontend is organised by feature, not by type.** Every page and component owns its own CSS Module beside it, so styles never leak across the app.
+**CORS is locked to the deployed frontend.** The origin is read from `FRONTEND_URL` with a localhost fallback for development, and the JWT travels in the `Authorization` header rather than a cookie.
 
 ---
 
 ## Running locally
 
-**Requirements:** Node.js 18+, a MongoDB instance (local or Atlas).
+**Requirements:** Node.js 18+, and a MongoDB instance (local or Atlas).
 
-### 1. Backend
+### Backend
 
 ```bash
 cd backend
@@ -99,7 +103,7 @@ Create `backend/.env`:
 | `MONGO_URI` | MongoDB connection string |
 | `JWT_SECRET` | Secret used to sign tokens |
 | `PORT` | Port to listen on (defaults to 5000) |
-| `FRONTEND_URL` | Allowed origin for CORS and reset links |
+| `FRONTEND_URL` | Allowed CORS origin and base for reset links |
 | `EMAIL_USER` | Sender address for password-reset mail |
 | `EMAIL_PASS` | App password for that address |
 
@@ -107,7 +111,7 @@ Create `backend/.env`:
 npm run dev
 ```
 
-### 2. Frontend
+### Frontend
 
 ```bash
 cd frontend
@@ -118,7 +122,7 @@ Create `frontend/.env`:
 
 | Variable | Purpose |
 |---|---|
-| `VITE_API_URL` | Base URL of the backend, e.g. `http://localhost:5000` |
+| `VITE_API_URL` | Backend base URL, e.g. `http://localhost:5000` |
 
 ```bash
 npm run dev
@@ -128,34 +132,61 @@ The app runs at `http://localhost:5173`.
 
 ---
 
-## API overview
+## API reference
 
-| Route | Method | Auth | Purpose |
+### Auth — `/api/auth`
+
+| Method | Route | Auth | Purpose |
 |---|---|---|---|
-| `/api/auth/register` | POST | — | Create an account |
-| `/api/auth/login` | POST | — | Sign in, returns a JWT |
-| `/api/auth/forgot-password` | POST | — | Email a reset link |
-| `/api/auth/reset-password/:token` | POST | — | Set a new password |
-| `/api/blogs` | GET | — | Public post feed |
-| `/api/blogs/:id` | GET | — | Single post |
-| `/api/blogs` | POST | ✓ | Create a post |
-| `/api/blogs/:id` | PUT / DELETE | ✓ | Update or delete your post |
-| `/api/games/join` | POST | ✓ | Enter the matchmaking queue |
-| `/api/games/move` | POST | ✓ | Submit a move |
-| `/api/games/minesweeper/start` | POST | ✓ | Start a board |
-| `/api/games/minesweeper/reveal` | POST | ✓ | Reveal a cell |
-| `/api/games/minesweeper/flag` | POST | ✓ | Flag a cell |
-| `/api/games/best/:game` | GET | ✓ | Your best score for a game |
-| `/api/games/leaderboard/:game` | GET | — | Top five for a game |
+| POST | `/register` | — | Create an account |
+| POST | `/login` | — | Sign in, returns a JWT |
+| POST | `/forgot-password` | — | Email a reset link |
+| GET | `/me` | ✓ | Current user |
+| PUT | `/profile/username` | ✓ | Change username |
+| PUT | `/profile/email` | ✓ | Change email |
+| PUT | `/profile/password` | ✓ | Change password |
+| PUT | `/reset-password/:token` | — | Set a new password from a reset token |
+
+### Blogs — `/api/blogs`
+
+| Method | Route | Auth | Purpose |
+|---|---|---|---|
+| GET | `/public` | — | Published posts, paginated |
+| GET | `/public/:id` | — | A single published post |
+| GET | `/` | ✓ | Your own posts, drafts included |
+| GET | `/:id` | ✓ | Your own post by id |
+| POST | `/` | ✓ | Create a post |
+| PUT | `/:id` | ✓ | Edit a post |
+| PATCH | `/:id` | ✓ | Publish or unpublish a post |
+| DELETE | `/:id` | ✓ | Delete a post |
+
+### Games — `/api/games`
+
+| Method | Route | Auth | Purpose |
+|---|---|---|---|
+| POST | `/join` | ✓ | Enter the matchmaking queue |
+| POST | `/move` | ✓ | Submit a tic-tac-toe move |
+| POST | `/score` | ✓ | Record a score |
+| POST | `/minesweeper/start` | ✓ | Start a board |
+| POST | `/minesweeper/reveal` | ✓ | Reveal a cell |
+| POST | `/minesweeper/flag` | ✓ | Flag a cell |
+| GET | `/best/:game` | ✓ | Your best score for one game |
+| GET | `/leaderboard/:game` | — | Top five for a game |
+
+### Socket.IO events
+
+Client to server: `register`, `requestMatch`, `joinMatchRoom`, `makeMove`, `offerDraw`, `acceptDraw`, `refuseDraw`, `cancelDraw`, `disconnect`.
+
+Server to client: `playerJoined`, `moveMade`, `timerUpdate`, `drawRefused`, `drawCanceled`, `gameFinished`.
 
 ---
 
 ## Known limitations
 
-- **Single-player games compute their score on the client.** The server authenticates who is posting and validates the game name, but it cannot verify that a score was actually earned — the crash point in Aviator, for example, is generated in the browser. Making these fully tamper-proof requires moving the game loop server-side. That's the next piece of work.
-- **The online tic-tac-toe has no persistent record.** Wins, losses and draws live in component state and disappear on refresh, so there's no leaderboard for it. A proper one needs a win/loss/draw tally per user rather than a single score field.
-- **The matchmaking queue has no expiry.** A player who closes their tab mid-wait leaves an entry behind. A TTL index on `createdAt` would fix it.
-- **Password-reset email fails in production.** Render blocks outbound SMTP on free instances, so reset mail doesn't send there. The fix is an HTTP email API over port 443 rather than SMTP.
+- **Single-player scores are computed on the client.** The server authenticates who is posting and rejects unknown game names, but it cannot verify that a score was actually earned — the Aviator crash point, for example, is generated in the browser. Closing this properly means moving the game loop server-side.
+- **The online tic-tac-toe has no persistent record.** Wins, losses and draws live in component state and disappear on refresh, so it has no leaderboard. A real one needs a per-user tally rather than a single score field.
+- **The matchmaking queue has no expiry.** A player who closes their tab while waiting leaves an entry behind. A TTL index on `createdAt` would clear it.
+- **Password-reset email does not send in production.** Render blocks outbound SMTP on free instances, so reset mail fails there while the rest of the flow works. The fix is an HTTP email API on port 443 instead of SMTP.
 
 ---
 
