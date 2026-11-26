@@ -5,7 +5,7 @@ import { useAuth } from "../../../context/AuthContext";
 const BACKEND_BASE = `${import.meta.env.VITE_API_URL}/api/games`;
 
 export default function Minesweeper() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [board, setBoard] = useState([]);
   const [gameId, setGameId] = useState(null);
   const [gameOver, setGameOver] = useState(false);
@@ -31,7 +31,9 @@ export default function Minesweeper() {
   // 🔹 Fetch best score on mount
   useEffect(() => {
     if (user?._id) {
-      fetch(`${BACKEND_BASE}/best/${user._id}/minesweeper`)
+      fetch(`${BACKEND_BASE}/best/minesweeper`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch best score");
           return res.json();
@@ -52,7 +54,10 @@ export default function Minesweeper() {
     try {
       const res = await fetch(`${BACKEND_BASE}/minesweeper/start`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ rows: 9, cols: 9, mines: 10, user: user?._id }),
       });
       const data = await res.json();
@@ -77,7 +82,10 @@ export default function Minesweeper() {
     try {
       const res = await fetch(`${BACKEND_BASE}/minesweeper/reveal`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ gameId, row: r, col: c }),
       });
       const data = await res.json();
@@ -117,7 +125,10 @@ export default function Minesweeper() {
     try {
       const res = await fetch(`${BACKEND_BASE}/minesweeper/flag`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ gameId, row: r, col: c }),
       });
       const data = await res.json();
@@ -134,12 +145,11 @@ export default function Minesweeper() {
     try {
       const res = await fetch(`${BACKEND_BASE}/score`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: user._id,
-          game: "minesweeper",
-          score: currentScore
-        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ game: "minesweeper", score: currentScore }),
       });
 
       const data = await res.json();

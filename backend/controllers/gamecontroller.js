@@ -256,11 +256,19 @@ export const flagCell = async (req, res) => {
 };
 
 // Update best score
+const SCORED = ["aviator", "minesweeper", "carrace"];
+const MAX_SCORE = { aviator: 100000, minesweeper: 9999, carrace: 100000 };
+
 export const updateBestScore = async (req, res) => {
   try {
     const { game, score } = req.body;
     const userId = req.user._id;
-    if ( !game || typeof score !== "number") {
+    if (
+      !SCORED.includes(game) ||
+      typeof score !== "number" ||
+      score < 0 ||
+      score > MAX_SCORE[game]
+    ) {
       return res.status(400).json({ error: "Invalid input" });
     }
 

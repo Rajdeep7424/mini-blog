@@ -5,7 +5,7 @@ import { useAuth } from "../../../context/AuthContext";
 const BACKEND_BASE = `${import.meta.env.VITE_API_URL}/api/games`;
 
 export default function CarRace() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const canvasRef = useRef(null);
 
   const [gameOver, setGameOver] = useState(false);
@@ -33,7 +33,9 @@ useEffect(() => {
   // 🔹 Fetch best score on mount
   useEffect(() => {
     if (user?._id) {
-      fetch(`${BACKEND_BASE}/best/${user._id}/carrace`)
+      fetch(`${BACKEND_BASE}/best/carrace`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch best score");
           return res.json();
@@ -43,7 +45,7 @@ useEffect(() => {
         })
         .catch((err) => console.error("Error fetching best score:", err));
     }
-  }, [user]);
+  }, [user, token]);
 
   // 🔹 Update best score in backend
   const updateBestScore = async (finalScore) => {
@@ -52,12 +54,11 @@ useEffect(() => {
     try {
       const res = await fetch(`${BACKEND_BASE}/score`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: user._id,
-          game: "carrace",
-          score: finalScore,
-        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ game: "carrace", score: finalScore }),
       });
 
       const data = await res.json();

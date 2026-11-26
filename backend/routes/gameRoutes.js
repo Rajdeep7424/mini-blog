@@ -3,7 +3,9 @@ import express from 'express';
 import { joinQueue, makeMove } from '../controllers/gamecontroller.js';
 // import authMiddleware from '../middleware/authMiddleware.js';
 import { protect as authMiddleware } from '../middleware/authMiddleware.js';
-import { startMinesweeper, revealCell, flagCell } from "../controllers/gamecontroller.js";
+import { startMinesweeper, revealCell, flagCell, updateBestScore } from "../controllers/gamecontroller.js";
+
+router.post("/score", authMiddleware, updateBestScore);
 
 
 const router = express.Router();

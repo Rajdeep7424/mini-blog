@@ -13,10 +13,13 @@ import gameSocket from './socket/gameSocket.js';
 dotenv.config();
 const app = express();
 
+// Allow the deployed frontend and local dev
+const FRONTEND_URL = process.env.FRONTEND_URL || "https://blogsvault.netlify.app";
+const allowedOrigins = [FRONTEND_URL, "http://localhost:5173"];
+
 // Middleware
 app.use(cors({
-  origin: '*',
-  credentials: true,
+  origin: allowedOrigins,
   methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type','Authorization']
 }));

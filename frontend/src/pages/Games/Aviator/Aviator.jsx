@@ -29,13 +29,15 @@ export default function Aviator() {
   // Fetch best score
   useEffect(() => {
     if (!user?._id) return;
-    fetch(`${BACKEND_BASE}/best/${user._id}/aviator`)
+    fetch(`${BACKEND_BASE}/best/aviator`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
       .then(res => res.json())
       .then(data => {
         if (data.bestScore !== undefined) setBestScore(data.bestScore);
       })
       .catch(console.error);
-  }, [user]);
+  }, [user, token]);
 
   // Update best score
   const updateBestScore = async (finalScore) => {
